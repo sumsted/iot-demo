@@ -1,5 +1,3 @@
-#include <EEPROM.h>
-
 /*
  * initialize device - write settings to eeprom of device
  * button 1 reads from eeprom and displays both default and eeprom configuration
@@ -13,13 +11,24 @@
  * 5. write default settings to eeprom (button 2 right) (4 blinks successful write)
  * 6. verify eeprom data (button 1 again)
  */
+#include <EEPROM.h>
 
-#define DEFAULT_SERIAL = "DV01";
-#define DEFAULT_DEVICE_ID = "001";
-#define DEFAULT_MODEL = "Dropbox";
-#define DEFAULT_FIRMWARE_REVISION = "1.0"
-#define DEFAULT_LOCATION = "123 Urgent Ave."
-#define DEFAULT_GATEWAY_URL = "http://iot.purplepromise.xyz";
+#define DEFAULT_SERIAL "DV01";
+#define DEFAULT_DEVICE_ID "001";
+#define DEFAULT_MODEL "Dropbox";
+#define DEFAULT_FIRMWARE_REVISION "1.0"
+#define DEFAULT_WIFI_SSID "testwifi"
+#define DEFAULT_WIFI_PASSWORD "testpassword"
+#define DEFAULT_LOCATION "123 Urgent Ave."
+#define DEFAULT_GATEWAY_PROTOCOL "http";
+#define DEFAULT_GATEWAY_HOST "iot.purplepromise.xyz";
+#define DEFAULT_GATEWAY_PORT "443";
+#define DEFAULT_GATEWAY_PATH "/";
+
+#define DEFAULT_STATE_0 "Happy"
+#define DEFAULT_STATE_1 "Sad"
+#define DEFAULT_STATE_2 "Groovy"
+#define DEFAULT_STATE_3 "Bad"
 
 #define STATUS_LED 10
 
@@ -32,20 +41,25 @@ bool setEeprom = false
 long button1LastPress = 0;
 long button2LastPress = 0;
 
-
 typedef struct {
     char serial[11];
     char deviceId[11];
     char model[11];
     char firmware[11];
+    char wifiSsid[11];
+    char wifiPassword[21];
     char location[51];
-    char gatewayUrl[51];
-    char padding[34];
+    char gatewayProtocol[11];
+    char gatewayHost[51];
+    char gatewayPort[11];
+    char gatewayPath[51];
+    char state[4][11];
+    char padding[6];
 } ConfigurationType;
 
 union ConfigurationUnion{
     ConfigurationType configuration;
-    byte bytes[200];
+    byte bytes[250];
 };
 
 ConfigurationUnion defaultConfig;
@@ -95,8 +109,17 @@ void initializeDefaultConfig(){
     strcpy(defaultConfig.deviceId, DEFAULT_DEVICE_ID);
     strcpy(defaultConfig.model, DEFAULT_MODEL);
     strcpy(defaultConfig.firmware, DEFAULT_FIRMWARE_REVISION);
+    strcpy(defaultConfig.wifiSsid, DEFAULT_WIFI_SSID);
+    strcpy(defaultConfig.wifiPassword, DEFAULT_WIFI_PASSWORD);
     strcpy(defaultConfig.location, DEFAULT_LOCATION);
-    strcpy(defaultConfig,gatewayUrl,DEFAULT_GATEWAY_URL);
+    strcpy(defaultConfig.gatewayProtocol,DEFAULT_GATEWAY_PROTOCOL);
+    strcpy(defaultConfig.gatewayHost,DEFAULT_GATEWAY_HOST);
+    strcpy(defaultConfig.gatewayPort,DEFAULT_GATEWAY_PORT);
+    strcpy(defaultConfig.gatewayPath,DEFAULT_GATEWAY_PATH);
+    strcpy(defaultConfig.state[0],DEFAULT_STATE_0);
+    strcpy(defaultConfig.state[1],DEFAULT_STATE_1);
+    strcpy(defaultConfig.state[2],DEFAULT_STATE_2);
+    strcpy(defaultConfig.state[3],DEFAULT_STATE_3);
     Serial.println("default config initialized");
     printConfig("default", defaultConfig);
 }
