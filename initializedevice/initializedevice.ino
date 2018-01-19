@@ -13,17 +13,17 @@
  */
 #include <EEPROM.h>
 
-#define DEFAULT_SERIAL "DV01";
-#define DEFAULT_DEVICE_ID "001";
-#define DEFAULT_MODEL "Dropbox";
+#define DEFAULT_SERIAL "DV01"
+#define DEFAULT_DEVICE_ID "001"
+#define DEFAULT_MODEL "Dropbox"
 #define DEFAULT_FIRMWARE_REVISION "1.0"
 #define DEFAULT_WIFI_SSID "testwifi"
 #define DEFAULT_WIFI_PASSWORD "testpassword"
 #define DEFAULT_LOCATION "123 Urgent Ave."
-#define DEFAULT_GATEWAY_PROTOCOL "http";
-#define DEFAULT_GATEWAY_HOST "iot.purplepromise.xyz";
-#define DEFAULT_GATEWAY_PORT "443";
-#define DEFAULT_GATEWAY_PATH "/";
+#define DEFAULT_GATEWAY_PROTOCOL "http"
+#define DEFAULT_GATEWAY_HOST "iot.purplepromise.xyz"
+#define DEFAULT_GATEWAY_PORT "443"
+#define DEFAULT_GATEWAY_PATH "/"
 
 #define DEFAULT_STATE_0 "Happy"
 #define DEFAULT_STATE_1 "Sad"
@@ -35,8 +35,8 @@
 #define BUTTON_1 11
 #define BUTTON_2 12
 
-bool getEeprom = false
-bool setEeprom = false
+bool getEeprom = false;
+bool setEeprom = false;
 
 long button1LastPress = 0;
 long button2LastPress = 0;
@@ -85,16 +85,16 @@ void loop() {
     if(getEeprom){
         readEepromConfig();
         blink(2);
-        postTelemetry = false;
+        getEeprom = false;
     }
     if(setEeprom){
         writeDefaultConfig();
         blink(4);
-        getConfiguration = false;
+        setEeprom= false;
     }
 }
 
-void blink(times){
+void blink(byte times){
     for(byte i=0; i<times; i++){
         digitalWrite(STATUS_LED, 1);
         delay(100);
@@ -104,51 +104,52 @@ void blink(times){
 }
 
 void initializeDefaultConfig(){
-    memset(defaultConfig, '\0', sizeof(config));
-    strcpy(defaultConfig.serial, DEFAULT_SERIAL);
-    strcpy(defaultConfig.deviceId, DEFAULT_DEVICE_ID);
-    strcpy(defaultConfig.model, DEFAULT_MODEL);
-    strcpy(defaultConfig.firmware, DEFAULT_FIRMWARE_REVISION);
-    strcpy(defaultConfig.wifiSsid, DEFAULT_WIFI_SSID);
-    strcpy(defaultConfig.wifiPassword, DEFAULT_WIFI_PASSWORD);
-    strcpy(defaultConfig.location, DEFAULT_LOCATION);
-    strcpy(defaultConfig.gatewayProtocol,DEFAULT_GATEWAY_PROTOCOL);
-    strcpy(defaultConfig.gatewayHost,DEFAULT_GATEWAY_HOST);
-    strcpy(defaultConfig.gatewayPort,DEFAULT_GATEWAY_PORT);
-    strcpy(defaultConfig.gatewayPath,DEFAULT_GATEWAY_PATH);
-    strcpy(defaultConfig.state[0],DEFAULT_STATE_0);
-    strcpy(defaultConfig.state[1],DEFAULT_STATE_1);
-    strcpy(defaultConfig.state[2],DEFAULT_STATE_2);
-    strcpy(defaultConfig.state[3],DEFAULT_STATE_3);
+    memset(&defaultConfig, '\0', sizeof(defaultConfig));
+    strcpy(defaultConfig.configuration.serial, DEFAULT_SERIAL);
+    strcpy(defaultConfig.configuration.deviceId, DEFAULT_DEVICE_ID);
+    strcpy(defaultConfig.configuration.model, DEFAULT_MODEL);
+    strcpy(defaultConfig.configuration.firmware, DEFAULT_FIRMWARE_REVISION);
+    strcpy(defaultConfig.configuration.wifiSsid, DEFAULT_WIFI_SSID);
+    strcpy(defaultConfig.configuration.wifiPassword, DEFAULT_WIFI_PASSWORD);
+    strcpy(defaultConfig.configuration.location, DEFAULT_LOCATION);
+    strcpy(defaultConfig.configuration.gatewayProtocol,DEFAULT_GATEWAY_PROTOCOL);
+    strcpy(defaultConfig.configuration.gatewayHost,DEFAULT_GATEWAY_HOST);
+    strcpy(defaultConfig.configuration.gatewayPort,DEFAULT_GATEWAY_PORT);
+    strcpy(defaultConfig.configuration.gatewayPath,DEFAULT_GATEWAY_PATH);
+    strcpy(defaultConfig.configuration.state[0],DEFAULT_STATE_0);
+    strcpy(defaultConfig.configuration.state[1],DEFAULT_STATE_1);
+    strcpy(defaultConfig.configuration.state[2],DEFAULT_STATE_2);
+    strcpy(defaultConfig.configuration.state[3],DEFAULT_STATE_3);
     Serial.println("default config initialized");
-    printConfig("default", defaultConfig);
+    printConfig("default", &defaultConfig);
 }
 
 void readEepromConfig(){
     int i = 0;
-    memset(eepromConfig, '\0', sizeof(config));
+    memset(&eepromConfig, '\0', sizeof(eepromConfig));
     for(i=0;i<sizeof(eepromConfig);i++){
         eepromConfig.bytes[i] = EEPROM.read(i);
     }
     Serial.println("eeprom configuration read");
-    printConfig("eeprom", eepromConfig);
+    printConfig("eeprom", &eepromConfig);
     Serial.println("default configuration is");
-    printConfig("default", defaultConfig);
+    printConfig("default", &defaultConfig);
 }
 
 void writeDefaultConfig(){
+    int i = 0;
     Serial.println("writing default to eeprom");
-    printConfig("default", defaultConfig);
+    printConfig("default", &defaultConfig);
     for(i=0;i<sizeof(eepromConfig);i++){
-        EPROM.write(i, defaultConfig.bytes[i]);
+        EEPROM.write(i, defaultConfig.bytes[i]);
     }
     Serial.println("write complete");
     readEepromConfig();
     Serial.println("confirmed eeprom config");
-    printConfig("eeprom", eepromConfig);
+    printConfig("eeprom", &eepromConfig);
 }
 
-void printConfig(*label, *config){
+void printConfig(char *label, ConfigurationUnion *config){
     Serial.print("Configuration: ");
     Serial.println(label);
     Serial.print("serial: ");
@@ -161,8 +162,22 @@ void printConfig(*label, *config){
     Serial.println(config->configuration.firmware);
     Serial.print("location: ");
     Serial.println(config->configuration.location);
-    Serial.print("gatewayUrl: ");
-    Serial.println(config->configuration.gatewayUrl);
+    Serial.print("gatewayProtocol: ");
+    Serial.println(config->configuration.gatewayProtocol);
+    Serial.print("gatewayHost: ");
+    Serial.println(config->configuration.gatewayHost);
+    Serial.print("gatewayPort: ");
+    Serial.println(config->configuration.gatewayPort);
+    Serial.print("gatewayPath: ");
+    Serial.println(config->configuration.gatewayPath);
+    Serial.print("State 0: ");
+    Serial.println(config->configuration.state[0]);
+    Serial.print("State 1: ");
+    Serial.println(config->configuration.state[1]);
+    Serial.print("State 2: ");
+    Serial.println(config->configuration.state[2]);
+    Serial.print("State 3: ");
+    Serial.println(config->configuration.state[3]);
 }
 
 void button1Handler(){
@@ -173,7 +188,7 @@ void button1Handler(){
     }
 }
 
-void button1Handler(){
+void button2Handler(){
     long buttonPress = millis();
     if(buttonPress > button2LastPress+1000){
         setEeprom = true;

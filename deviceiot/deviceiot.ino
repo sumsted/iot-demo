@@ -6,7 +6,7 @@
  * This code may be used on a number of esp32 devices. behavior is determined by eeprom config
  */
 #include <EEPROM.h>
-#include <WifFi.h>
+//#include <WifFi.h>
 
 #define LED_1 8
 #define LED_2 9
@@ -16,7 +16,7 @@
 #define BUTTON_2 12
 
 bool postTelemetry = false;
-bool postToGateway = false;
+bool getConfiguration = false;
 long button1LastPress = 0;
 long button2LastPress = 0;
 
@@ -50,7 +50,7 @@ typedef struct {
     char state[11];
     int data;
     char padding[54];
-} telemetry_type;
+} TelemetryType;
 
 union TelemetryUnion {
     TelemetryType telemetry;
@@ -61,10 +61,10 @@ TelemetryUnion telem;
 
 void setup() {
     Serial.begin(57600);
-    Serial.print(telemetry.serial);
+    Serial.print(telem.telemetry.serial);
     Serial.println(" start");
 
-    config = readEepromConfig();
+    readEepromConfig();
 
     pinMode(LED_1, OUTPUT);
     pinMode(LED_2, OUTPUT);
@@ -91,23 +91,24 @@ void loop() {
 }
 
 char *establishWifiConnection(){
-    byte tries =0
-    WiFi.begin(config.wifiSsid, config.wifiPassword);
-    while(Wifi.status() != WL_CONNECTED){
-        blink(1);
+    byte tries=0;
+    //WiFi.begin(config.configuration.wifiSsid, config.configuration.wifiPassword);
+    while(true){
+    //while(Wifi.status() != WL_CONNECTED){
+        blink(STATUS_LED, 1);
         Serial.print("attempting to connect, try: ");
         Serial.println(tries);
         tries++;
         if(tries > 10){
             Serial.print("failed to establish connection to wifi: ");
-            Serial.println(config.wifiSsid);
+            Serial.println(config.configuration.wifiSsid);
             return NULL;
         }
         delay(500);
     }
     Serial.print("connected to wifi with IP address: ");
-    Serial.println(config.WiFi.localIP());
-    return Wifi.localIP();
+//    Serial.println(WiFi.localIP());
+    return "";;//Wifi.localIP();
 }
 
 int getRequest(char *payload){
@@ -115,8 +116,9 @@ int getRequest(char *payload){
     char buffer[500];
     char *action = "GET";
     sprintf(buffer, "%s %s%s %s/1.1\r\nHost: %s\r\nConnection: close\r\n\r\n",
-            action, config.gatewayPath, payload, config.gatewayProtocol, config.model, config.deviceId);
-    if(!client.connect(config.gatewayHost, config.gatewayPort)){
+            action, config.configuration.gatewayPath, payload, config.configuration.gatewayProtocol,
+            config.configuration.model, config.configuration.deviceId);
+    if(!client.connect(config.configuration.gatewayHost, config.configuration.gatewayPort)){
         Serial.println("client connection failed");
         return NULL;
     }
@@ -142,8 +144,9 @@ int postRequest(char *payload){
     char buffer[500];
     char *action = "POST";
     sprintf(buffer, "%s %s %s/1.1\r\nHost: %s%s\r\nConnection: close\r\nContent-length: %d\r\n\r\n%s\r\n",
-            action, config.gatewayPath, config.gatewayProtocol, config.model, deviceId, strlen(payload), payload);
-    if(!client.connect(config.gatewayHost, config.gatewayPort)){
+            action, config.configuration.gatewayPath, config.configuration.gatewayProtocol,
+            config.configuration.model, deviceId, strlen(payload), payload);
+    if(!client.connect(config.configuration.gatewayHost, config.configuration.gatewayPort)){
         Serial.println("client connection failed");
         return NULL;
     }
@@ -168,7 +171,7 @@ void postToGateway(){
     // todo prepare request
 
     // todo post request
-    int status = 1
+    int status = 1;
 
     blink(STATUS_LED, 5);
 }
@@ -209,7 +212,7 @@ void button1Handler(){
     }
 }
 
-void button1Handler(){
+void button2Handler(){
     long buttonPress = millis();
     if(buttonPress > button2LastPress+1000){
         postTelemetry = true;
@@ -219,28 +222,28 @@ void button1Handler(){
 
 void readEepromConfig(){
     int i = 0;
-    memset(eepromConfig, '\0', sizeof(config));
-    for(i=0;i<sizeof(eepromConfig);i++){
-        eepromConfig.bytes[i] = EEPROM.read(i);
+    memset(&config, '\0', sizeof(config));
+    for(i=0;i<sizeof(config);i++){
+        config.bytes[i] = EEPROM.read(i);
     }
     Serial.println("eeprom configuration read");
-    printConfig("eeprom", eepromConfig);
+    printConfig("eeprom", &config);
 }
-
 
 void writeNewConfig(ConfigurationUnion *newConfig){
+    int i=0;
     Serial.println("writing new config to eeprom");
-    for(i=0;i<sizeof(newConfig);i++){
-        EPROM.write(i, newConfig.bytes[i]);
+    for(i=0;i<sizeof(*newConfig);i++){
+        EEPROM.write(i, newConfig->bytes[i]);
     }
     Serial.println("write complete");
-    config = readEepromConfig();
+    readEepromConfig();
     Serial.println("confirmed eeprom config");
-    printConfig("eeprom", config);
+    printConfig("eeprom", &config);
 }
 
-void printConfig(*label, *config){
-    Serial.print("Configuration: ");
+void printConfig(char *label, ConfigurationUnion *config){
+    Serial.print("\nConfiguration: ");
     Serial.println(label);
     Serial.print("serial: ");
     Serial.println(config->configuration.serial);
@@ -252,12 +255,25 @@ void printConfig(*label, *config){
     Serial.println(config->configuration.firmware);
     Serial.print("location: ");
     Serial.println(config->configuration.location);
-    Serial.print("gatewayUrl: ");
-    Serial.println(config->configuration.gatewayUrl);
+    Serial.print("gatewayProtocol: ");
+    Serial.println(config->configuration.gatewayProtocol);
+    Serial.print("gatewayHost: ");
+    Serial.println(config->configuration.gatewayHost);
+    Serial.print("gatewayPort: ");
+    Serial.println(config->configuration.gatewayPort);
+    Serial.print("gatewayPath: ");
+    Serial.println(config->configuration.gatewayPath);
+    Serial.print("State 0: ");
+    Serial.println(config->configuration.state[0]);
+    Serial.print("State 1: ");
+    Serial.println(config->configuration.state[1]);
+    Serial.print("State 2: ");
+    Serial.println(config->configuration.state[2]);
+    Serial.print("State 3: ");
+    Serial.println(config->configuration.state[3]);
 }
 
-
-void blink(led, times){
+void blink(byte led, byte times){
     for(byte i=0; i<times; i++){
         digitalWrite(led, 1);
         delay(100);
