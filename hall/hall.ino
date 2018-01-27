@@ -1,41 +1,63 @@
-//Simple sketch to access the internal hall effect detector on the esp32.
-//values can be quite low.
-//Brian Degger / @sctv
+#define EMA_A .65
+#define INACTIVE 42
+#define THRESHOLD -2
+#define DELAY 0
+#define TICK_LIGHT 25
 
-#define EMA_A .8
-#define INACTIVE 37
-#define THRESHOLD 34
-int emaS;
-int ticks = 0;
+int emaS1;
+int emaS2;
+unsigned long ticks = 0;
 int val = 0;
+int hpv = 0;
 int lastVal = 0;
-bool in_tick = false;
+bool inTick = false;
+
+unsigned long lastTicks = 0;
+unsigned long lastMillis = 0;
+unsigned long checkMillis = 0;
+int rpm = 0;
 
 void setup() {
   Serial.begin(9600);
+  pinMode(TICK_LIGHT, OUTPUT);
+  digitalWrite(TICK_LIGHT, 0);
   val = hallRead();
   lastVal = hallRead();
-    }
-
-void loop() {
-  // put your main code here, to run repeatedly:
-  val = hallRead();
-  emaS = lowPassFilter(val);
-  if(!in_tick && emaS < THRESHOLD){
-    ticks++;
-    in_tick = true;
-  } else if(emaS > THRESHOLD){
-    in_tick = false;
-  }
-
-  Serial.print(in_tick+20);
-  Serial.print(", ");
-  Serial.println(emaS);
-  delay(20);
+  emaS1 = lastVal;
+  lastMillis = millis();
 }
 
-int lowPassFilter(int val){
-    emaS = (EMA_A*val) + ((1-EMA_A)*emaS);
-    return emaS;
+void loop() {
+  val = hallRead();
+  lowPassFilter(&emaS1, val);
+  hpv = val - emaS1;
+  if(!inTick && hpv < THRESHOLD){
+    ticks++;
+    inTick = true;
+    digitalWrite(TICK_LIGHT, 1);
+  } else if(hpv > THRESHOLD){
+    inTick = false;
+    digitalWrite(TICK_LIGHT, 0);
+  }
+  checkMillis = millis();
+  if(checkMillis - lastMillis  > 2000){
+
+    rpm = (ticks - lastTicks)  * 60000 / (checkMillis - lastMillis);
+
+    lastTicks = ticks;
+    lastMillis = checkMillis;
+  }
+
+  Serial.print(inTick+20);
+  Serial.print(", ");
+  Serial.print(rpm);
+  Serial.print(", ");
+  Serial.println(hpv);
+  delay(0);
+}
+
+int lowPassFilter(int *pems, int val){
+    *pems = (EMA_A*val) + ((1-EMA_A) * *pems);
+    return *pems;
 }
 
