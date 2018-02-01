@@ -1,28 +1,31 @@
-#define RED_BUTTON 25
-#define GREEN_BUTTON 27
-#define BLUE_BUTTON 34
-#define YELLOW_BUTTON 32
-#define WHITE_BUTTON 39
+#define RED_BUTTON 39
+#define GREEN_BUTTON 34
+#define BLUE_BUTTON 38
+#define YELLOW_BUTTON 37
+#define WHITE_BUTTON 36
 
 #define RED_LED 26
 #define GREEN_LED 14
-#define BLUE_LED 35
-#define YELLOW_LED 33
+#define BLUE_LED 27
+#define YELLOW_LED 25
 
 #define SUCCESS_LED 13
 #define FAIL_LED 12
 
 #define NUM_COLORS 4
-enum {
-    red,
+#define BUTTON_WAIT 1000
+
+enum colors {
     green,
+    red,
     blue,
     yellow
-} colors;
+};
 
-byte leds[NUM_COLORS] = {RED_LED,GREEN_LED,BLUE_BUTTON, YELLOW_BUTTON};
-byte buttons[NUM_COLORS] = {RED_BUTTON, GREEN_BUTTON, BLUE_BUTTON, YELLOW_BUTTON};
-
+byte leds[NUM_COLORS] = {GREEN_LED,RED_LED,BLUE_LED, YELLOW_LED};
+byte buttons[NUM_COLORS] = {GREEN_BUTTON, RED_BUTTON, BLUE_BUTTON, YELLOW_BUTTON};
+long presses[NUM_COLORS] = {0, 0, 0, 0};
+long lastWhiteButtonPress = 0;
 long last = 0;
 long current = 0;
 
@@ -34,11 +37,16 @@ void setup(){
     byte i;
     for(i=0;i<NUM_COLORS;i++){
         pinMode(leds[i], OUTPUT);
-        pinMode(buttons[0], INPUT);
+        pinMode(buttons[i], INPUT);
     }
     pinMode(WHITE_BUTTON, INPUT);
     pinMode(SUCCESS_LED, OUTPUT);
     pinMode(FAIL_LED, OUTPUT);
+    attachInterrupt(GREEN_BUTTON, greenButtonPush,CHANGE);
+    attachInterrupt(RED_BUTTON, redButtonPush,CHANGE);
+    attachInterrupt(BLUE_BUTTON, blueButtonPush,CHANGE);
+    attachInterrupt(YELLOW_BUTTON, yellowButtonPush,CHANGE);
+    attachInterrupt(WHITE_BUTTON, whiteButtonPush,CHANGE);
 }
 
 void newSequence(byte s){
@@ -53,11 +61,11 @@ void newSequence(byte s){
 
 void loop(){
     current = millis();
+//
+//    simonButtonHandler();
+//    restartButtonHandler();
 
-    simonButtonHandler();
-    restartButtonHandler();
-
-    ledFlash();
+//    ledFlash();
 
     if((current - last) > 10000){
         postUpdate();
@@ -101,9 +109,9 @@ void ledFlash(){
         digitalWrite(FAIL_LED, 0);
         delay(100);
         for(j=0;j<NUM_COLORS;j++){
-            digitalWrite(leds[i], 1);
+            digitalWrite(leds[j], 1);
             delay(100);
-            digitalWrite(leds[i], 0);
+            digitalWrite(leds[j], 0);
             delay(100);
         }
     }
@@ -112,3 +120,57 @@ void ledFlash(){
 void postUpdate(){
 }
 
+void greenButtonPush(){
+    long buttonPress = millis();
+    Serial.println("greenbuttonpush");
+    if(buttonPress > presses[green]+BUTTON_WAIT){
+        blink(GREEN_LED);
+        presses[green] = buttonPress;
+    }
+}
+
+void redButtonPush(){
+    long buttonPress = millis();
+    Serial.println("redbuttonpush");
+    if(buttonPress > presses[red]+BUTTON_WAIT){
+        blink(leds[red]);
+        presses[red] = buttonPress;
+    }
+}
+
+void blueButtonPush(){
+    long buttonPress = millis();
+    Serial.println("bluebuttonpush");
+    if(buttonPress > presses[blue]+BUTTON_WAIT){
+        blink(leds[blue]);
+        presses[blue] = buttonPress;
+    }
+}
+
+void yellowButtonPush(){
+    long buttonPress = millis();
+    Serial.println("yellowbuttonpush");
+    if(buttonPress > presses[yellow]+BUTTON_WAIT){
+        blink(leds[yellow]);
+        presses[yellow] = buttonPress;
+    }
+}
+
+void whiteButtonPush(){
+    long buttonPress = millis();
+    Serial.println("whitebuttonpush");
+    if(buttonPress > lastWhiteButtonPress+BUTTON_WAIT){
+        blink(SUCCESS_LED);
+        blink(FAIL_LED);
+        lastWhiteButtonPress = buttonPress;
+    }
+}
+
+void blink(byte pin){
+    Serial.print("blink:");
+    Serial.println(pin);
+    digitalWrite(pin, 1);
+    delay(100);
+    digitalWrite(pin, 0);
+    delay(100);
+}
