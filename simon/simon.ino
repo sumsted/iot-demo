@@ -14,6 +14,7 @@
 
 #define NUM_COLORS 4
 #define BUTTON_WAIT 250
+#define LED_BLINK_DELAY 200
 
 enum colors {
     green,
@@ -37,6 +38,9 @@ bool whiteAction = false;
 
 #define MAX_SEQUENCE_SIZE 10
 byte sequence[MAX_SEQUENCE_SIZE];
+byte playerIndex = 0;
+byte gameSize = 0;
+
 
 void setup(){
     Serial.begin(9600);
@@ -51,23 +55,10 @@ void setup(){
     attachInterrupt(GREEN_BUTTON, greenButtonPush,CHANGE);
     attachInterrupt(RED_BUTTON, redBlueButtonPush,CHANGE);
     attachInterrupt(YELLOW_BUTTON, yellowWhiteButtonPush,CHANGE);
-    blink(SUCCESS_LED);
-    blink(FAIL_LED);
-    blink(GREEN_LED);
-    blink(RED_LED);
-    blink(BLUE_LED);
-    blink(YELLOW_LED);
+    ledFlash();
+    resetGame();
 }
 
-void newSequence(byte s){
-    memset(sequence,'\0',MAX_SEQUENCE_SIZE);
-    byte i=0;
-    long nextColor = 0;
-    for(i=0;i < s && s < MAX_SEQUENCE_SIZE; i++){
-        nextColor = random(0, 4);
-        sequence[i] = nextColor;
-    }
-}
 
 void loop(){
     current = millis();
@@ -77,54 +68,90 @@ void loop(){
     last = current;
 
     if(redAction==true){
-        blink(RED_LED);
+        testButtonPush(red);
         redAction = false;
     }
     if(greenAction==true){
-        blink(GREEN_LED);
+        testButtonPush(green);
         greenAction = false;
     }
     if(blueAction ==true){
-        blink(BLUE_LED);
+        testButtonPush(blue);
         blueAction = false;
     }
     if(yellowAction==true){
-        blink(YELLOW_LED);
+        testButtonPush(yellow);
         yellowAction = false;
     }
     if(whiteAction==true){
         blink(SUCCESS_LED);
         blink(FAIL_LED);
+        gameSize = 0;
+        resetGame();
         whiteAction = false;
     }
 
-//    delay(100);
 }
 
 
+/*
+ * Game code
+ */
+void createSequence(byte s){
+    memset(sequence,'\0',MAX_SEQUENCE_SIZE);
+    byte i=0;
+    long nextColor = 0;
+    for(i=0;i < s && s < MAX_SEQUENCE_SIZE; i++){
+        nextColor = random(0, 4);
+        sequence[i] = nextColor;
+        Serial.println(nextColor);
+    }
+}
 
-void simonButtonHandler(){
-    byte i;
-    int buttonState = 0;
+void resetGame(){
+    playerIndex = 0;
+    gameSize++;
+    if(gameSize == MAX_SEQUENCE_SIZE){
+        gameSize = 1;
+    }
+    createSequence(gameSize);
+    showSequence();
+}
 
-    for(i=0;i<NUM_COLORS;i++){
-        buttonState = digitalRead(buttons[i]);
-        if(buttonState == HIGH){
-            Serial.print("Button press: ");
-            Serial.println(i);
+bool testButtonPush(byte colorChosen){
+    if(colorChosen == sequence[playerIndex]){
+        blink(leds[colorChosen]);
+        playerIndex++;
+        if(playerIndex == gameSize){
+            blink(SUCCESS_LED);
+            resetGame();
         }
+    } else {
+        blink(FAIL_LED);
+        blink(FAIL_LED);
+        gameSize = 0;
+        resetGame();
     }
 }
 
-void restartButtonHandler(){
-    int buttonState = 0;
-    buttonState = digitalRead(WHITE_BUTTON);
-    if(buttonState == HIGH){
-        Serial.print("Button press: ");
-        Serial.println(WHITE_BUTTON);
+void showSequence(){
+    byte i;
+    blink(SUCCESS_LED);
+    for(i=0;i<gameSize;i++){
+        blink(leds[sequence[i]]);
     }
 }
 
+/*
+ * Send the state out
+ */
+void postUpdate(){
+}
+
+
+/*
+ * light up the leds
+ */
 void ledFlash(){
     byte i,j;
 
@@ -146,12 +173,19 @@ void ledFlash(){
     }
 }
 
-void postUpdate(){
+void blink(byte pin){
+    digitalWrite(pin, 1);
+    delay(LED_BLINK_DELAY);
+    digitalWrite(pin, 0);
+    delay(LED_BLINK_DELAY/4);
 }
 
+
+/*
+ * Capture button pushes. Some buttons share an interrupt so check for that as well.
+ */
 void greenButtonPush(){
     long buttonPress = millis();
-    Serial.println("greenbuttonpush");
     if(buttonPress > presses[green]+BUTTON_WAIT){
         greenAction = true;
         presses[green] = buttonPress;
@@ -171,7 +205,6 @@ void redBlueButtonPush(){
 
 void redButtonPush(){
     long buttonPress = millis();
-    Serial.println("redbuttonpush");
     if(buttonPress > presses[red]+BUTTON_WAIT){
         redAction = true;
         presses[red] = buttonPress;
@@ -180,13 +213,11 @@ void redButtonPush(){
 
 void blueButtonPush(){
     long buttonPress = millis();
-    Serial.println("bluebuttonpush");
     if(buttonPress > presses[blue]+BUTTON_WAIT){
         blueAction = true;
         presses[blue] = buttonPress;
     }
 }
-
 
 void yellowWhiteButtonPush(){
     // shared interrupt
@@ -201,7 +232,6 @@ void yellowWhiteButtonPush(){
 
 void yellowButtonPush(){
     long buttonPress = millis();
-    Serial.println("yellowbuttonpush");
     if(buttonPress > presses[yellow]+BUTTON_WAIT){
         yellowAction = true;
         presses[yellow] = buttonPress;
@@ -210,17 +240,8 @@ void yellowButtonPush(){
 
 void whiteButtonPush(){
     long buttonPress = millis();
-    Serial.println("whitebuttonpush");
     if(buttonPress > lastWhiteButtonPress+BUTTON_WAIT){
         whiteAction = true;
         lastWhiteButtonPress = buttonPress;
     }
-}
-
-void blink(byte pin){
-    Serial.print("blink:");
-    Serial.println(pin);
-    digitalWrite(pin, 1);
-    delay(50);
-    digitalWrite(pin, 0);
 }
