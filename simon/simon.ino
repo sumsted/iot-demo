@@ -1,14 +1,14 @@
+#include "requests.h"
+
 #define RED_BUTTON 39
 #define GREEN_BUTTON 34
 #define BLUE_BUTTON 38
 #define YELLOW_BUTTON 37
 #define WHITE_BUTTON 36
-
 #define RED_LED 26
 #define GREEN_LED 14
 #define BLUE_LED 27
 #define YELLOW_LED 25
-
 #define SUCCESS_LED 13
 #define FAIL_LED 12
 
@@ -41,6 +41,7 @@ byte sequence[MAX_SEQUENCE_SIZE];
 byte playerIndex = 0;
 byte gameSize = 0;
 
+Requests *r = new Requests();
 
 void setup(){
     Serial.begin(9600);
