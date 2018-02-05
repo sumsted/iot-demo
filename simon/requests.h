@@ -29,18 +29,18 @@ union ConfigurationUnion{
 class Requests {
     public:
         Requests();
-        Requests(ConfigurationType *newConfig);
+        Requests(ConfigurationUnion *newConfig);
 
         int getRequest(char *payload);
         int postRequest(char *payload);
         void printConfig(char *label, ConfigurationUnion *config);
 
     private:
-        ConfigurationUnion config;
+        ConfigurationUnion *config;
         uint32_t localIp;
 
-        void readEepromConfig();
-        void writeNewConfig(ConfigurationUnion *newConfig);
+//        void readEepromConfig();
+//        void writeNewConfig(ConfigurationUnion *newConfig);
 
         void establishWifiConnection();
         const char* rootCa = \

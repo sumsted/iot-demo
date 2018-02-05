@@ -15,15 +15,15 @@
 
 #define DEFAULT_SERIAL "DV01"
 #define DEFAULT_DEVICE_ID "001"
-#define DEFAULT_MODEL "Dropbox"
+#define DEFAULT_MODEL "Simon"
 #define DEFAULT_FIRMWARE_REVISION "1.0"
 #define DEFAULT_WIFI_SSID "testwifi"
 #define DEFAULT_WIFI_PASSWORD "testpassword"
 #define DEFAULT_LOCATION "123 Urgent Ave."
 #define DEFAULT_GATEWAY_PROTOCOL "http"
-#define DEFAULT_GATEWAY_HOST "iot.purplepromise.xyz"
-#define DEFAULT_GATEWAY_PORT "443"
-#define DEFAULT_GATEWAY_PATH "/"
+#define DEFAULT_GATEWAY_HOST "jsonplaceholder.typicode.com"
+#define DEFAULT_GATEWAY_PORT 80
+#define DEFAULT_GATEWAY_PATH "/users"
 
 #define DEFAULT_STATE_0 "Happy"
 #define DEFAULT_STATE_1 "Sad"
@@ -51,16 +51,17 @@ typedef struct {
     char location[51];
     char gatewayProtocol[11];
     char gatewayHost[51];
-    char gatewayPort[11];
+    uint16_t gatewayPort;
     char gatewayPath[51];
     char state[4][11];
-    char padding[6];
+    char padding[15];
 } ConfigurationType;
 
 union ConfigurationUnion{
     ConfigurationType configuration;
-    byte bytes[250];
+    unsigned char bytes[250];
 };
+
 
 ConfigurationUnion defaultConfig;
 ConfigurationUnion eepromConfig;
@@ -114,7 +115,7 @@ void initializeDefaultConfig(){
     strcpy(defaultConfig.configuration.location, DEFAULT_LOCATION);
     strcpy(defaultConfig.configuration.gatewayProtocol,DEFAULT_GATEWAY_PROTOCOL);
     strcpy(defaultConfig.configuration.gatewayHost,DEFAULT_GATEWAY_HOST);
-    strcpy(defaultConfig.configuration.gatewayPort,DEFAULT_GATEWAY_PORT);
+    defaultConfig.configuration.gatewayPort = DEFAULT_GATEWAY_PORT;
     strcpy(defaultConfig.configuration.gatewayPath,DEFAULT_GATEWAY_PATH);
     strcpy(defaultConfig.configuration.state[0],DEFAULT_STATE_0);
     strcpy(defaultConfig.configuration.state[1],DEFAULT_STATE_1);

@@ -41,7 +41,7 @@ byte sequence[MAX_SEQUENCE_SIZE];
 byte playerIndex = 0;
 byte gameSize = 0;
 
-Requests *r = new Requests();
+Requests *r;
 
 void setup(){
     Serial.begin(9600);
@@ -58,13 +58,15 @@ void setup(){
     attachInterrupt(YELLOW_BUTTON, yellowWhiteButtonPush,CHANGE);
     ledFlash();
     resetGame();
+    ConfigurationUnion *pcu = defaultConfig();
+    r = new Requests(pcu);
 }
 
 
 void loop(){
     current = millis();
     if((current - last) > 10000){
-        postUpdate();
+//        r->postRequest();
     }
     last = current;
 
@@ -141,12 +143,6 @@ void showSequence(){
     for(i=0;i<gameSize;i++){
         blink(leds[sequence[i]]);
     }
-}
-
-/*
- * Send the state out
- */
-void postUpdate(){
 }
 
 
@@ -245,4 +241,26 @@ void whiteButtonPush(){
         whiteAction = true;
         lastWhiteButtonPress = buttonPress;
     }
+}
+
+ConfigurationUnion *defaultConfig(){
+    ConfigurationUnion *cu = new ConfigurationUnion;
+    memset(cu, '\0', sizeof(cu));
+    strcpy(cu->configuration.serial, "SC001");
+    strcpy(cu->configuration.deviceId, "SIMON01");
+    strcpy(cu->configuration.model, "ESP32");
+    strcpy(cu->configuration.firmware, "1.0");
+    strcpy(cu->configuration.wifiSsid, "u1002");
+    strcpy(cu->configuration.wifiPassword, "e4fac6c7");
+    strcpy(cu->configuration.location, "Home");
+    strcpy(cu->configuration.gatewayProtocol,"http");
+    strcpy(cu->configuration.gatewayHost,"jsonplaceholder.typicode.com");
+    cu->configuration.gatewayPort = 80;
+    strcpy(cu->configuration.gatewayPath,"/users");
+    strcpy(cu->configuration.state[1],"1");
+    strcpy(cu->configuration.state[2],"2");
+    strcpy(cu->configuration.state[3],"3");
+    Serial.println("default config initialized");
+//    r->printConfig("default", &cu);
+    return cu;
 }
