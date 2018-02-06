@@ -41,6 +41,12 @@ byte sequence[MAX_SEQUENCE_SIZE];
 byte playerIndex = 0;
 byte gameSize = 0;
 
+int highScore = 0;
+int lastScore = 0;
+int averageScore = 0;
+int numGames = 0;
+int totalScore = 0;
+
 Requests *r;
 
 void setup(){
@@ -60,14 +66,12 @@ void setup(){
     resetGame();
     ConfigurationUnion *pcu = defaultConfig();
     r = new Requests(pcu);
-    r->postAdaIo("scottumsted", "seacon-2018.simon", 23);
 }
-
 
 void loop(){
     current = millis();
     if((current - last) > 10000){
-//        r->postRequest();
+        postScores();
     }
     last = current;
 
@@ -97,7 +101,6 @@ void loop(){
 
 }
 
-
 /*
  * Game code
  */
@@ -112,7 +115,22 @@ void createSequence(byte s){
     }
 }
 
+void calculateScores(int score){
+    highScore = score > highScore ? score : highScore;
+    lastScore = score;
+    numGames++;
+    totalScore+=score;
+    averageScore = totalScore/numGames;
+}
+
+void postScores(){
+    r->postAdaIo("scottumsted", "seacon-2018.simon-high-score", highScore);
+    r->postAdaIo("scottumsted", "seacon-2018.simon-last-score", lastScore);
+    r->postAdaIo("scottumsted", "seacon-2018.simon-average-score", averageScore);
+}
+
 void resetGame(){
+    calculateScores(playerIndex);
     playerIndex = 0;
     gameSize++;
     if(gameSize == MAX_SEQUENCE_SIZE){
