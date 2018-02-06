@@ -70,6 +70,38 @@ int Requests::postRequest(char *payload){
 }
 
 
+int Requests::postAdaIo(char *user, char *feed, int value){
+    HTTPClient http;
+    char payload[1000];
+    char url[1000];
+    char *payloadPattern = "{\"value\":%d}";
+    char *urlPattern = "https://io.adafruit.com/api/v2/%s/feeds/%s/data";
+    int code;
+
+    sprintf(payload, payloadPattern, value);
+    sprintf(url, urlPattern, user, feed);
+
+    http.begin(url, rootCa);
+    http.addHeader("Content-Type", "application/json");
+    http.addHeader("X-AIO-Key", "c8d50f2a58754014abe65dee32b78655");
+    code = http.POST(payload);
+
+    if(code > 0){
+        String response = http.getString();
+        Serial.println(code);
+        Serial.println(response);
+    }else{
+        Serial.print("problem posting to adaio: ");
+        Serial.println(code);
+        Serial.print("url: ");
+        Serial.println(url);
+        Serial.print("payload: ");
+        Serial.println(payload);
+    }
+    http.end();
+}
+
+
 void Requests::establishWifiConnection(){
     byte tries=0;
     Serial.print("establishwificonnection: ");

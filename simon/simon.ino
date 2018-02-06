@@ -60,6 +60,7 @@ void setup(){
     resetGame();
     ConfigurationUnion *pcu = defaultConfig();
     r = new Requests(pcu);
+    r->postAdaIo("scottumsted", "seacon-2018.simon", 23);
 }
 
 
@@ -253,9 +254,9 @@ ConfigurationUnion *defaultConfig(){
     strcpy(cu->configuration.wifiSsid, "u1002");
     strcpy(cu->configuration.wifiPassword, "e4fac6c7");
     strcpy(cu->configuration.location, "Home");
-    strcpy(cu->configuration.gatewayProtocol,"http");
-    strcpy(cu->configuration.gatewayHost,"jsonplaceholder.typicode.com");
-    cu->configuration.gatewayPort = 80;
+    strcpy(cu->configuration.gatewayProtocol,"https");
+    strcpy(cu->configuration.gatewayHost,"io.adafruit.com");
+    cu->configuration.gatewayPort = 443;
     strcpy(cu->configuration.gatewayPath,"/users");
     strcpy(cu->configuration.state[1],"1");
     strcpy(cu->configuration.state[2],"2");
