@@ -69,11 +69,11 @@ void setup(){
 }
 
 void loop(){
-    current = millis();
-    if((current - last) > 10000){
-        postScores();
-    }
-    last = current;
+//    current = millis();
+//    if((current - last) > 15000){
+//        postScores();
+//        last = current;
+//    }
 
     if(redAction==true){
         testButtonPush(red);
@@ -111,7 +111,7 @@ void createSequence(byte s){
     for(i=0;i < s && s < MAX_SEQUENCE_SIZE; i++){
         nextColor = random(0, 4);
         sequence[i] = nextColor;
-        Serial.println(nextColor);
+//        Serial.println(nextColor);
     }
 }
 
@@ -124,13 +124,23 @@ void calculateScores(int score){
 }
 
 void postScores(){
-    r->postAdaIo("scottumsted", "seacon-2018.simon-high-score", highScore);
-    r->postAdaIo("scottumsted", "seacon-2018.simon-last-score", lastScore);
-    r->postAdaIo("scottumsted", "seacon-2018.simon-average-score", averageScore);
+    r->postAdaIo("scottumsted", "simon.high-score", highScore);
+//    r->postAdaIo("scottumsted", "simon.last-score", lastScore);
+//    r->postAdaIo("scottumsted", "simon.average-score", averageScore);
+    Serial.print(highScore);
+    Serial.print(", ");
+    Serial.print(lastScore);
+    Serial.print(", ");
+    Serial.println(averageScore);
 }
 
 void resetGame(){
     calculateScores(playerIndex);
+    current = millis();
+    if((current - last) > 30000){
+        postScores();
+        last = current;
+    }
     playerIndex = 0;
     gameSize++;
     if(gameSize == MAX_SEQUENCE_SIZE){
