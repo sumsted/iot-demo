@@ -67,6 +67,7 @@ void setup(){
     ConfigurationUnion *pcu = defaultConfig();
     r = new Requests(pcu);
     if(r->wifiConnected){
+        postScores();
         ledFlash();
     } else {
         blink(FAIL_LED);
@@ -80,11 +81,11 @@ void setup(){
 long lastButtonPush = 0;
 
 void loop(){
-    current = millis();
-    if((current - last) > 30000 ){
-        postScores();
-        last = current;
-    }
+//    current = millis();
+//    if((current - last) > 30000 ){
+//        postScores();
+//        last = current;
+//    }
 
     if(redAction==true){
         testButtonPush(red);
