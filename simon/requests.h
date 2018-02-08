@@ -30,7 +30,7 @@ class Requests {
     public:
         Requests();
         Requests(ConfigurationUnion *newConfig);
-
+        byte wifiConnected;
         int getRequest(char *payload);
         int postRequest(char *payload);
         int postAdaIo(char *user, char *feed, int value);

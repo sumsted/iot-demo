@@ -103,6 +103,7 @@ int Requests::postAdaIo(char *user, char *feed, int value){
 
 
 void Requests::establishWifiConnection(){
+    wifiConnected = 0;
     byte tries=0;
     Serial.print("establishwificonnection: ");
     Serial.print(config->configuration.wifiSsid);
@@ -121,6 +122,7 @@ void Requests::establishWifiConnection(){
     }
     Serial.print("connected to wifi with IP address: ");
     localIp = WiFi.localIP();
+    wifiConnected = 1;
 }
 
 //void Requests::readEepromConfig(){

@@ -51,6 +51,7 @@ Requests *r;
 
 void setup(){
     Serial.begin(9600);
+
     byte i;
     for(i=0;i<NUM_COLORS;i++){
         pinMode(leds[i], OUTPUT);
@@ -62,18 +63,28 @@ void setup(){
     attachInterrupt(GREEN_BUTTON, greenButtonPush,CHANGE);
     attachInterrupt(RED_BUTTON, redBlueButtonPush,CHANGE);
     attachInterrupt(YELLOW_BUTTON, yellowWhiteButtonPush,CHANGE);
-    ledFlash();
-    resetGame();
+
     ConfigurationUnion *pcu = defaultConfig();
     r = new Requests(pcu);
+    if(r->wifiConnected){
+        ledFlash();
+    } else {
+        blink(FAIL_LED);
+        blink(FAIL_LED);
+        blink(FAIL_LED);
+    }
+
+    resetGame();
 }
 
+long lastButtonPush = 0;
+
 void loop(){
-//    current = millis();
-//    if((current - last) > 15000){
-//        postScores();
-//        last = current;
-//    }
+    current = millis();
+    if((current - last) > 30000 ){
+        postScores();
+        last = current;
+    }
 
     if(redAction==true){
         testButtonPush(red);
@@ -126,7 +137,9 @@ void calculateScores(int score){
 void postScores(){
     r->postAdaIo("scottumsted", "simon.high-score", highScore);
 //    r->postAdaIo("scottumsted", "simon.last-score", lastScore);
+//    blink(SUCCESS_LED);
 //    r->postAdaIo("scottumsted", "simon.average-score", averageScore);
+//    blink(SUCCESS_LED);
     Serial.print(highScore);
     Serial.print(", ");
     Serial.print(lastScore);
@@ -180,7 +193,6 @@ void showSequence(){
  */
 void ledFlash(){
     byte i,j;
-
     for(i=0;i<1;i++){
         digitalWrite(SUCCESS_LED, 1);
         delay(100);
