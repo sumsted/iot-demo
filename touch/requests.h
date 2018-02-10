@@ -31,10 +31,8 @@ class Requests {
         Requests();
         Requests(ConfigurationUnion *newConfig);
         byte wifiConnected;
-        int getRequest(char *payload);
-        int postRequest(char *payload);
-        int postAdaIo(char *user, char *feed, int value);
-        void printConfig(char *label, ConfigurationUnion *config);
+        int postAdaIo(const char *user, const char *feed, int value);
+        void printConfig(const char *label, ConfigurationUnion *config);
 
     private:
         ConfigurationUnion *config;
