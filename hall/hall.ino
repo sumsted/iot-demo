@@ -1,23 +1,17 @@
 #include "requests.h"
 
-#define EMA_A .65
-#define INACTIVE 42
-#define THRESHOLD -2
-#define DELAY 0
 #define TICK_LIGHT 25
 #define LED_BLINK_DELAY 50
+#define RPM_WINDOW 5000
+#define POST_WINDOW 30000
+#define ENCODER_PIN 12
 
-int emaS1;
-int emaS2;
 unsigned long ticks = 0;
-int val = 0;
-int hpv = 0;
-int lastVal = 0;
-bool inTick = false;
 
 unsigned long lastTicks = 0;
-unsigned long lastMillis = 0;
-unsigned long checkMillis = 0;
+unsigned long lastRpmMillis = 0;
+unsigned long lastPostMillis = 0;
+unsigned long currentMillis = 0;
 int rpm = 0;
 
 Requests *r;
@@ -26,10 +20,14 @@ void setup() {
     Serial.begin(9600);
     pinMode(TICK_LIGHT, OUTPUT);
     digitalWrite(TICK_LIGHT, 0);
-    val = hallRead();
-    lastVal = hallRead();
-    emaS1 = lastVal;
-    lastMillis = millis();
+
+    lastRpmMillis = millis();
+    lastPostMillis = millis();
+
+    pinMode(ENCODER_PIN, INPUT);
+    digitalWrite(ENCODER_PIN, HIGH);
+    attachInterrupt(digitalPinToInterrupt(ENCODER_PIN), encoderCb, RISING);
+
     ConfigurationUnion *pcu = defaultConfig();
     r = new Requests(pcu);
     if(r->wifiConnected){
@@ -38,42 +36,39 @@ void setup() {
     } else {
         blink(TICK_LIGHT);
         blink(TICK_LIGHT);
+        blink(TICK_LIGHT);
+        blink(TICK_LIGHT);
     }
 }
 
 void loop() {
-    val = hallRead();
-    lowPassFilter(&emaS1, val);
-    hpv = val - emaS1;
-
-    if(!inTick && hpv < THRESHOLD){
-        ticks++;
-        inTick = true;
-        digitalWrite(TICK_LIGHT, 1);
-    } else if(hpv > THRESHOLD){
-        inTick = false;
-        digitalWrite(TICK_LIGHT, 0);
-    }
-
-    checkMillis = millis();
-    if(checkMillis - lastMillis  > 30000){
-        rpm = (ticks - lastTicks)  * 60000 / (checkMillis - lastMillis);
-        r->postAdaIo("scottumsted", "simon.rpm", rpm);
+    currentMillis = millis();
+    if(currentMillis - lastRpmMillis  > RPM_WINDOW){
+        rpm = ((ticks - lastTicks)  * 60000) / (currentMillis - lastRpmMillis);
+        Serial.print("ticks: ");
+        Serial.print(ticks);
+        Serial.print(" lastTicks: ");
+        Serial.print(lastTicks);
+        Serial.print(" currentMillis: ");
+        Serial.print(currentMillis);
+        Serial.print(" lastRpmMillis: ");
+        Serial.print(lastRpmMillis);
+        Serial.print(" rpm: ");
+        Serial.println(rpm);
         lastTicks = ticks;
-        lastMillis = checkMillis;
+        lastRpmMillis = currentMillis;
     }
 
-    Serial.print(inTick+20);
-    Serial.print(", ");
-    Serial.print(rpm);
-    Serial.print(", ");
-    Serial.println(hpv);
-    delay(0);
+    currentMillis = millis();
+    if(currentMillis - lastPostMillis  > POST_WINDOW){
+        r->postAdaIo("scottumsted", "simon.rpm", rpm);
+        Serial.println("post");
+        lastPostMillis = currentMillis;
+    }
 }
 
-int lowPassFilter(int *pems, int val){
-    *pems = (EMA_A*val) + ((1-EMA_A) * *pems);
-    return *pems;
+void encoderCb(){
+    ticks++;
 }
 
 void blink(byte pin){

@@ -24,6 +24,10 @@ int Requests::postAdaIo(const char *user, const char *feed, int value){
 
     sprintf(payload, payloadPattern, value);
     sprintf(url, urlPattern, user, feed);
+    Serial.print("URL: ");
+    Serial.println(url);
+    Serial.print("payload: ");
+    Serial.println(payload);
 
     http.begin(url, rootCa);
     http.addHeader("Content-Type", "application/json");

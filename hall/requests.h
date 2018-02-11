@@ -38,9 +38,6 @@ class Requests {
         ConfigurationUnion *config;
         uint32_t localIp;
 
-//        void readEepromConfig();
-//        void writeNewConfig(ConfigurationUnion *newConfig);
-
         void establishWifiConnection();
         const char* rootCa = \
             "-----BEGIN CERTIFICATE-----\n" \
