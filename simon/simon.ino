@@ -137,10 +137,6 @@ void calculateScores(int score){
 
 void postScores(){
     r->postAdaIo("scottumsted", "simon.high-score", highScore);
-//    r->postAdaIo("scottumsted", "simon.last-score", lastScore);
-//    blink(SUCCESS_LED);
-//    r->postAdaIo("scottumsted", "simon.average-score", averageScore);
-//    blink(SUCCESS_LED);
     Serial.print(highScore);
     Serial.print(", ");
     Serial.print(lastScore);
