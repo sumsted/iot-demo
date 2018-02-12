@@ -54,8 +54,7 @@ void loop(){
 
     current = millis();
     if((current - last) > 15000 ){
-        r->postAdaIo("scottumsted", "simon.contact", checkContact());
-        last = current;
+fi        last = current;
     }
     Serial.print(start);
     Serial.print(", ");
