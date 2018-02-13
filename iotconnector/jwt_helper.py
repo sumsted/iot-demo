@@ -11,14 +11,14 @@ class JwtHelper:
         self.jwt, self.expiration = JwtHelper.create_jwt(project_id, private_key_file, algorithm)
 
     def valid_token(self):
-        return True if datetime.datetime.utcnow() >= self.expiration else False
+        return True if datetime.datetime.utcnow() < self.expiration else False
 
     def get_valid_jwt(self):
         if self.valid_token():
-            return self.jwt
+            return self.jwt.decode("utf-8")
         else:
             self.jwt, self.expiration = JwtHelper.create_jwt(self.project_id, self.private_key_file, self.algorithm)
-            return self.jwt
+            return self.jwt.decode("utf-8")
 
     @staticmethod
     def create_jwt(project_id, private_key_file, algorithm):
