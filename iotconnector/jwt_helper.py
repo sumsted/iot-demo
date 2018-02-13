@@ -25,12 +25,12 @@ class JwtHelper:
         now = datetime.datetime.utcnow()
         expiration = now + datetime.timedelta(minutes=60)
         token = {
-                # The time that the token was issued at
-                'iat': now,
-                # The time the token expires.
-                'exp': expiration,
-                # The audience field should always be set to the GCP project id.
-                'aud': project_id
+            # The time that the token was issued at
+            'iat': now,
+            # The time the token expires.
+            'exp': expiration,
+            # The audience field should always be set to the GCP project id.
+            'aud': project_id
         }
 
         # Read the private key file.
@@ -38,6 +38,11 @@ class JwtHelper:
             private_key = f.read()
 
         print('Creating JWT using {} from private key file {}'.format(
-                algorithm, private_key_file))
+            algorithm, private_key_file))
 
         return jwt.encode(token, private_key, algorithm=algorithm), expiration
+
+
+if __name__ == '__main__':
+    j = JwtHelper('app1', '..\..\..\settings\iot_keys\simon_private.pem', 'RS256')
+    print(j.jwt)

@@ -44,3 +44,8 @@ class Settings:
     def get_dict(self):
         if self.instance is not None:
             return self.instance.settings
+
+
+if __name__ == '__main__':
+    s = Settings()
+    pass
