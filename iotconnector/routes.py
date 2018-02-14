@@ -1,10 +1,14 @@
-from bottle import static_file, route, get, post, template
+import json
 
-from sf_helper import SfHelper
-from settings import Settings
+import bottle
+from bottle import static_file, route, get, post, template, request
+
+from iotconnector.giot_helper import GiotHelper
+from iotconnector.logit import logit
+from iotconnector.settings import Settings
+from iotconnector.sf_helper import SfHelper
 
 settings = Settings()
-from logit import logit
 
 
 def post_dropbox_event(state):
@@ -19,12 +23,68 @@ def post_dropbox_event(state):
 
 @route('/static/<filepath:path>')
 def server_static(filepath):
-    return static_file(filepath, root=settings.DF17['STATIC_FOLDER'])
+    return static_file(filepath, root=settings.WEB['STATIC_FOLDER'])
 
 
 @get('/')
 def get_index():
     return template('index.html')
+
+
+@post('/iotgw/state/<device_id>/<key>')
+def post_state(device_id, key):
+    state = request.json
+    result = {'success': False, 'message': 'state not posted'}
+    status_code = 400
+    if key == settings.IOT_GW_KEYS[device_id]:
+        if state is not None:
+            g = GiotHelper(device_id)
+            r = g.post_state(json.dumps(state))
+            if r.status_code == 200:
+                result['data'] = json.loads(r.content)
+                result['success'] = True
+                result['message'] = 'state posted'
+                status_code = 200
+            else:
+                result['data'] = json.loads(r.content)
+                result['success'] = False
+                result['message'] = 'state not posted'
+                status_code = 400
+        else:
+            logit("state missing")
+            status_code = 400
+    else:
+        logit("unauthorized")
+        status_code = 403
+    return bottle.HTTPResponse(status=status_code, body=json.dumps(result))
+
+
+@post('/iotgw/telemetry/<device_id>/<key>')
+def post_telemetry(device_id, key):
+    telemetry = request.json
+    result = {'success': False, 'message': 'telemetrynot posted'}
+    status_code = 400
+    if key == settings.IOT_GW_KEYS[device_id]:
+        if telemetry is not None:
+            g = GiotHelper(device_id)
+            r = g.post_telemetry(json.dumps(telemetry))
+            if r.status_code == 200:
+                result['data'] = json.loads(r.content)
+                result['success'] = True
+                result['message'] = 'telemetry posted'
+                status_code = 200
+            else:
+                result['data'] = json.loads(r.content)
+                result['success'] = False
+                result['message'] = 'telemetry not posted'
+                status_code = 400
+        else:
+            logit("telemetry missing")
+            status_code = 400
+    else:
+        logit("unauthorized")
+        status_code = 403
+    return bottle.HTTPResponse(status=status_code, body=json.dumps(result))
 
 
 @get('/service')

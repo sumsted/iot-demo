@@ -14,13 +14,13 @@ class GiotHelper:
 
     def __init__(self, device_id):
         self.device_id = device_id
-        self.jwt = JwtHelper(settings.get('GCP_PROJECT_ID'), settings.get('SIMON_PRIVATE_KEY'), 'RS256')
+        self.jwt = JwtHelper(settings.GCP['PROJECT_ID'], settings.DEVICES['SIMON_PRIVATE_KEY'], 'RS256')
 
     def post_state(self, state):
         url = self.STATE_URL % {
-            'project_id': settings.get('GCP_PROJECT_ID'),
-            'cloud_region': settings.get('GCP_CLOUD_REGION'),
-            'registry_id': settings.get('GCP_REGISTRY_ID'),
+            'project_id': settings.GCP['PROJECT_ID'],
+            'cloud_region': settings.GCP['CLOUD_REGION'],
+            'registry_id': settings.GCP['REGISTRY_ID'],
             'device_id': self.device_id
         }
         headers = {
@@ -35,9 +35,9 @@ class GiotHelper:
 
     def post_telemetry(self, telemetry):
         url = self.TELEMETRY_URL % {
-            'project_id': settings.get('GCP_PROJECT_ID'),
-            'cloud_region': settings.get('GCP_CLOUD_REGION'),
-            'registry_id': settings.get('GCP_REGISTRY_ID'),
+            'project_id': settings.GCP['PROJECT_ID'],
+            'cloud_region': settings.GCP['CLOUD_REGION'],
+            'registry_id': settings.GCP['REGISTRY_ID'],
             'device_id': self.device_id
         }
         headers = {
