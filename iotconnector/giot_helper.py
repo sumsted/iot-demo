@@ -14,7 +14,8 @@ class GiotHelper:
 
     def __init__(self, device_id):
         self.device_id = device_id
-        self.jwt = JwtHelper(settings.GCP['PROJECT_ID'], settings.DEVICES['SIMON_PRIVATE_KEY'], 'RS256')
+        private_key = device_id + '_private_key'
+        self.jwt = JwtHelper(settings.GCP['PROJECT_ID'], settings.DEVICES[private_key], 'RS256')
 
     def post_state(self, state):
         url = self.STATE_URL % {
