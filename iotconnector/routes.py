@@ -34,12 +34,14 @@ def get_index():
 @post('/iotgw/state/<device_id>/<key>')
 def post_state(device_id, key):
     state = request.json
+    logit(str(state))
+    state_str = json.dumps(state)
     result = {'success': False, 'message': 'state not posted'}
     status_code = 400
     if key == settings.IOT_GW_KEYS[device_id]:
         if state is not None:
             g = GiotHelper(device_id)
-            r = g.post_state(json.dumps(state))
+            r = g.post_state(state_str)
             if r.status_code == 200:
                 result['data'] = json.loads(r.content)
                 result['success'] = True
