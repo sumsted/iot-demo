@@ -1,6 +1,8 @@
-from bottle import TEMPLATE_PATH, run
+from bottle import TEMPLATE_PATH, run, debug
 
 from settings import Settings
+
+debug(True)
 
 settings = Settings()
 
