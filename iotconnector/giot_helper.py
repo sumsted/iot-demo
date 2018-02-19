@@ -2,8 +2,8 @@ import base64
 import json
 
 import requests
-from iotconnector.settings import Settings
-from iotconnector.jwt_helper import JwtHelper
+from settings import Settings
+from jwt_helper import JwtHelper
 
 settings = Settings()
 

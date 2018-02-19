@@ -1,6 +1,6 @@
 from bottle import TEMPLATE_PATH, run
 
-from iotconnector.settings import Settings
+from settings import Settings
 
 settings = Settings()
 

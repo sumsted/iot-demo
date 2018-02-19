@@ -3,10 +3,10 @@ import json
 import bottle
 from bottle import static_file, route, get, post, template, request
 
-from iotconnector.giot_helper import GiotHelper
-from iotconnector.logit import logit
-from iotconnector.settings import Settings
-from iotconnector.sf_helper import SfHelper
+from giot_helper import GiotHelper
+from logit import logit
+from settings import Settings
+from sf_helper import SfHelper
 
 settings = Settings()
 
