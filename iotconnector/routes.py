@@ -31,6 +31,25 @@ def get_index():
     return template('index.html')
 
 
+@get('/device')
+def get_index():
+    return template('device.html')
+
+
+@get('/watch')
+def get_index():
+    return template('watch.html')
+
+
+@get('/robot')
+def get_index():
+    return template('robot.html')
+
+
+@get('/about')
+def get_index():
+    return template('about.html')
+
 @post('/iotgw/state/<device_id>/<key>')
 def post_state(device_id, key):
     state = request.json
