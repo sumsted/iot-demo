@@ -5,6 +5,7 @@ from bottle import static_file, route, get, post, template, request
 
 from giot_helper import GiotHelper
 from logit import logit
+from redis_helper import RedisHelper
 from settings import Settings
 from sf_helper import SfHelper
 
@@ -43,12 +44,24 @@ def get_index():
 
 @get('/robot')
 def get_index():
-    return template('robot.html')
+    rh = RedisHelper()
+    location = rh.get_key(RedisHelper.robot_location_key)
+    return template('robot.html', **location)
 
 
 @get('/about')
 def get_index():
     return template('about.html')
+
+
+@post('/robot/location')
+def post_robot_location():
+    location = request.json
+    rh = RedisHelper()
+    rh.update_key(RedisHelper.robot_location_key, location)
+    result = {"success": True, "message": "location posted"}
+    return result
+
 
 @post('/iotgw/state/<device_id>/<key>')
 def post_state(device_id, key):
@@ -59,18 +72,22 @@ def post_state(device_id, key):
     status_code = 400
     if key == settings.IOT_GW_KEYS[device_id]:
         if state is not None:
-            g = GiotHelper(device_id)
-            r = g.post_state(state_str)
-            if r.status_code == 200:
-                result['data'] = json.loads(r.content.decode("utf-8"))
-                result['success'] = True
-                result['message'] = 'state posted'
-                status_code = 200
+            if settings.GCP['ACTIVE']:
+                g = GiotHelper(device_id)
+                r = g.post_state(state_str)
+                if r.status_code == 200:
+                    result['data'] = json.loads(r.content.decode("utf-8"))
+                    result['success'] = True
+                    result['message'] = 'state posted'
+                    status_code = 200
+                else:
+                    result['data'] = json.loads(r.content)
+                    result['success'] = False
+                    result['message'] = 'state not posted'
+                    status_code = 400
             else:
-                result['data'] = json.loads(r.content)
-                result['success'] = False
-                result['message'] = 'state not posted'
-                status_code = 400
+                rh = RedisHelper()
+                rh.push_queue(RedisHelper.state_queue_key, state)
         else:
             logit("state missing")
             status_code = 400
@@ -87,18 +104,22 @@ def post_telemetry(device_id, key):
     status_code = 400
     if key == settings.IOT_GW_KEYS[device_id]:
         if telemetry is not None:
-            g = GiotHelper(device_id)
-            r = g.post_telemetry(json.dumps(telemetry))
-            if r.status_code == 200:
-                result['data'] = json.loads(r.content)
-                result['success'] = True
-                result['message'] = 'telemetry posted'
-                status_code = 200
+            if settings.GCP['ACTIVE']:
+                g = GiotHelper(device_id)
+                r = g.post_telemetry(json.dumps(telemetry))
+                if r.status_code == 200:
+                    result['data'] = json.loads(r.content)
+                    result['success'] = True
+                    result['message'] = 'telemetry posted'
+                    status_code = 200
+                else:
+                    result['data'] = json.loads(r.content)
+                    result['success'] = False
+                    result['message'] = 'telemetry not posted'
+                    status_code = 400
             else:
-                result['data'] = json.loads(r.content)
-                result['success'] = False
-                result['message'] = 'telemetry not posted'
-                status_code = 400
+                rh = RedisHelper()
+                rh.push_queue(RedisHelper.telemetry_queue_key, telemetry)
         else:
             logit("telemetry missing")
             status_code = 400
