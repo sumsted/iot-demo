@@ -10,7 +10,9 @@ debug(settings.WEB['DEBUG'])
 
 TEMPLATE_PATH.insert(0, settings.WEB['TEMPLATE_FOLDER'])
 
-import routes
+import web_routes
+import giot_routes
+import platform_routes
 
 rh = RedisHelper()
 rh.clear()

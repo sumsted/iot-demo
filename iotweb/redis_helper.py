@@ -32,6 +32,18 @@ class RedisHelper:
         except AttributeError:
             return None
 
+    def peek_queue(self, key, count=None):
+        if count is None:
+            count = 10
+        result = []
+        try:
+            queue_list = self.r.lrange(key, 0, count)[::-1]
+            for serial_json in queue_list:
+                result.append(json.loads(serial_json)['data'])
+        except AttributeError:
+            return None
+        return result
+
     def update_key(self, key, value):
         data = {'data': value}
         serial_json = json.dumps(data)
@@ -56,25 +68,33 @@ if __name__ == '__main__':
     poster.push_queue(RedisHelper.state_queue_key, state)
     state = {"color": "blue"}
     poster.push_queue(RedisHelper.state_queue_key, state)
-    print(peeler.pop_queue(RedisHelper.state_queue_key))
-    print(peeler.pop_queue(RedisHelper.state_queue_key))
-    print(peeler.pop_queue(RedisHelper.state_queue_key))
+    state = {"color": "green"}
+    poster.push_queue(RedisHelper.state_queue_key, state)
+    state = {"color": "yellow"}
+    poster.push_queue(RedisHelper.state_queue_key, state)
+    state = {"color": "orange"}
+    poster.push_queue(RedisHelper.state_queue_key, state)
+    state = {"color": "black"}
+    poster.push_queue(RedisHelper.state_queue_key, state)
+    # print(peeler.pop_queue(RedisHelper.state_queue_key))
+    # print(peeler.pop_queue(RedisHelper.state_queue_key))
+    # print(peeler.pop_queue(RedisHelper.state_queue_key))
 
-    telemetry = {"direction": 23, "velocity": 14}
-    poster.push_queue(RedisHelper.telemetry_queue_key, telemetry)
-    telemetry = {"direction": 45, "velocity": 32}
-    poster.push_queue(RedisHelper.telemetry_queue_key, telemetry)
-    print(peeler.pop_queue(RedisHelper.telemetry_queue_key))
-    print(peeler.pop_queue(RedisHelper.telemetry_queue_key))
-
-    robot_command = {"direction": 10, "action": "forward"}
-    poster.push_queue(RedisHelper.robot_command_queue_key, robot_command)
-    robot_command = {"direction": 45, "action": "reverse"}
-    poster.push_queue(RedisHelper.robot_command_queue_key, robot_command)
-    print(peeler.pop_queue(RedisHelper.robot_command_queue_key))
-    print(peeler.pop_queue(RedisHelper.robot_command_queue_key))
-
-    robot_location_key = {"location": "http://192.168.2.3/robot"}
-    poster.update_key(RedisHelper.robot_location_key, robot_location_key)
-    print(peeler.get_key(RedisHelper.robot_location_key))
+    # telemetry = {"direction": 23, "velocity": 14}
+    # poster.push_queue(RedisHelper.telemetry_queue_key, telemetry)
+    # telemetry = {"direction": 45, "velocity": 32}
+    # poster.push_queue(RedisHelper.telemetry_queue_key, telemetry)
+    # print(peeler.pop_queue(RedisHelper.telemetry_queue_key))
+    # print(peeler.pop_queue(RedisHelper.telemetry_queue_key))
+    #
+    # robot_command = {"direction": 10, "action": "forward"}
+    # poster.push_queue(RedisHelper.robot_command_queue_key, robot_command)
+    # robot_command = {"direction": 45, "action": "reverse"}
+    # poster.push_queue(RedisHelper.robot_command_queue_key, robot_command)
+    # print(peeler.pop_queue(RedisHelper.robot_command_queue_key))
+    # print(peeler.pop_queue(RedisHelper.robot_command_queue_key))
+    #
+    # robot_location_key = {"location": "http://192.168.2.3/robot"}
+    # poster.update_key(RedisHelper.robot_location_key, robot_location_key)
+    # print(peeler.get_key(RedisHelper.robot_location_key))
 

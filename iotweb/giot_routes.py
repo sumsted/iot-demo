@@ -1,69 +1,17 @@
 import json
 
 import bottle
-from bottle import static_file, route, get, post, template, request
+from bottle import post, request
 
 from giot_helper import GiotHelper
 from logit import logit
 from redis_helper import RedisHelper
 from settings import Settings
-from sf_helper import SfHelper
 
 settings = Settings()
 
 
-def post_dropbox_event(state):
-    url = '/services/data/v41.0/sobjects/Dropbox_Event__e'
-    event_object = {
-        "dropbox_id__c": "SN002",
-        "state__c": state
-    }
-    sf = SfHelper()
-    return sf.post_json(url, event_object)
-
-
-@route('/static/<filepath:path>')
-def server_static(filepath):
-    return static_file(filepath, root=settings.WEB['STATIC_FOLDER'])
-
-
-@get('/')
-def get_index():
-    return template('index.html')
-
-
-@get('/device')
-def get_index():
-    return template('device.html')
-
-
-@get('/watch')
-def get_index():
-    return template('watch.html')
-
-
-@get('/robot')
-def get_index():
-    rh = RedisHelper()
-    location = rh.get_key(RedisHelper.robot_location_key)
-    return template('robot.html', **location)
-
-
-@get('/about')
-def get_index():
-    return template('about.html')
-
-
-@post('/robot/location')
-def post_robot_location():
-    location = request.json
-    rh = RedisHelper()
-    rh.update_key(RedisHelper.robot_location_key, location)
-    result = {"success": True, "message": "location posted"}
-    return result
-
-
-@post('/iotgw/state/<device_id>/<key>')
+@post('/giot/state/<device_id>/<key>')
 def post_state(device_id, key):
     state = request.json
     logit(str(state))
@@ -97,7 +45,7 @@ def post_state(device_id, key):
     return bottle.HTTPResponse(status=status_code, body=json.dumps(result))
 
 
-@post('/iotgw/telemetry/<device_id>/<key>')
+@post('/giot/telemetry/<device_id>/<key>')
 def post_telemetry(device_id, key):
     telemetry = request.json
     result = {'success': False, 'message': 'telemetrynot posted'}
@@ -128,9 +76,3 @@ def post_telemetry(device_id, key):
         status_code = 403
     return bottle.HTTPResponse(status=status_code, body=json.dumps(result))
 
-
-@get('/service')
-def get_bad():
-    logit("service")
-    post_dropbox_event('bad')
-    return {"status": "success"}
