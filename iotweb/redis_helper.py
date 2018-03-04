@@ -34,7 +34,7 @@ class RedisHelper:
 
     def peek_queue(self, key, count=None):
         if count is None:
-            count = 10
+            count = 9
         result = []
         try:
             queue_list = self.r.lrange(key, 0, count)[::-1]
@@ -76,6 +76,25 @@ if __name__ == '__main__':
     poster.push_queue(RedisHelper.state_queue_key, state)
     state = {"color": "black"}
     poster.push_queue(RedisHelper.state_queue_key, state)
+
+    telemetry = {"height": "wow"}
+    poster.push_queue(RedisHelper.telemetry_queue_key, telemetry)
+    telemetry = {"deptch": "-3"}
+    poster.push_queue(RedisHelper.telemetry_queue_key, telemetry)
+    telemetry = {"slant": "four"}
+    poster.push_queue(RedisHelper.telemetry_queue_key, telemetry)
+
+    command = {"forward": "4"}
+    poster.push_queue(RedisHelper.robot_command_queue_key, command)
+    command = {"right": "8"}
+    poster.push_queue(RedisHelper.robot_command_queue_key, command)
+    command = {"left": "2"}
+    poster.push_queue(RedisHelper.robot_command_queue_key, command)
+    command = {"rotateleft": "45"}
+    poster.push_queue(RedisHelper.robot_command_queue_key, command)
+    command = {"back": "3"}
+    poster.push_queue(RedisHelper.robot_command_queue_key, command)
+
     # print(peeler.pop_queue(RedisHelper.state_queue_key))
     # print(peeler.pop_queue(RedisHelper.state_queue_key))
     # print(peeler.pop_queue(RedisHelper.state_queue_key))
