@@ -10,7 +10,12 @@
 a,
 a:focus,
 a:hover {
-  color: #666;
+  color: #666666;
+}
+
+.robot-location-a {
+  color: #222222;
+  text-decoration: underline;
 }
 
 /* Custom default button */

@@ -113,7 +113,7 @@ if __name__ == '__main__':
     # print(peeler.pop_queue(RedisHelper.robot_command_queue_key))
     # print(peeler.pop_queue(RedisHelper.robot_command_queue_key))
     #
-    # robot_location_key = {"location": "http://192.168.2.3/robot"}
-    # poster.update_key(RedisHelper.robot_location_key, robot_location_key)
+    robot_location_key = {"location": "http://192.168.2.3/robot"}
+    poster.update_key(RedisHelper.robot_location_key, robot_location_key)
     # print(peeler.get_key(RedisHelper.robot_location_key))
 

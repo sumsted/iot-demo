@@ -4,9 +4,11 @@ var app = {
 
     },
     'go' : function(){
+        app.getAll();
         setInterval(app.getAll, app.pauseDuration);
     },
     'getAll' : function() {
+        app.getRobotLocation();
         app.getStates();
         app.getTelemetries();
         app.getRobotCommands();
@@ -39,6 +41,16 @@ var app = {
     },
     'getRobotCommands': function () {
         app.getQueue("robotcommand", "robot-list");
+    },
+    'getRobotLocation': function() {
+        var url = "/robot/location";
+        $.getJSON(
+            url
+        ).done(function (data) {
+            $("#robot-location").html(
+                "<a target=\"_blank\" class=\"robot-location-a\" href=\"" + data.data.location + "\">" + data.data.location + "</a>"
+            );
+        });
     }
 }
 

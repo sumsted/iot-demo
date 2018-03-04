@@ -19,6 +19,14 @@ def post_robot_location():
     return result
 
 
+@get('/robot/location')
+def get_robot_location():
+    rh = RedisHelper()
+    location = rh.get_key(RedisHelper.robot_location_key)
+    result = {'data': location}
+    return result
+
+
 @post('/robot/command/<key>')
 def post_robot_command(key):
     result = {'success': False, 'message': 'not authorized'}

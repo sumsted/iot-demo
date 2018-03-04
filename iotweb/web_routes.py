@@ -38,13 +38,6 @@ def get_index():
     return template('watch.html')
 
 
-@get('/robot')
-def get_index():
-    rh = RedisHelper()
-    location = rh.get_key(RedisHelper.robot_location_key)
-    return template('robot.html', **location)
-
-
 @get('/about')
 def get_index():
     return template('about.html')
