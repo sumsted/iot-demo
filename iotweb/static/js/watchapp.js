@@ -19,8 +19,11 @@ var app = {
         ).done(function (data) {
             $(id).html("");
             if (data.data.length > 0) {
+                var colorIndex = 0;
                 $.each(data.data, function (index, item) {
-                    var result = "<div class=\"row\"><div class=\"col-md\" style=\"color:#444\">" +
+                    var colorCode = "#" + Array(7).join(colorIndex.toString(16));
+                    colorIndex++;
+                    var result = "<div class=\"row\"><div class=\"col-md\" style=\"color:"+colorCode+"\">" +
                         JSON.stringify(item) +
                         "</div></div>";
                     $(id).append(result);

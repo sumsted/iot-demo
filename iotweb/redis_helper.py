@@ -62,7 +62,7 @@ if __name__ == '__main__':
     poster = RedisHelper()
     peeler = RedisHelper()
 
-    poster.clear()
+    # poster.clear()
 
     state = {"color": "red"}
     poster.push_queue(RedisHelper.state_queue_key, state)
