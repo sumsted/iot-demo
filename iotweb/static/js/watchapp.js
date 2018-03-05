@@ -9,12 +9,13 @@ var app = {
     },
     'getAll' : function() {
         app.getRobotLocation();
-        app.getStates();
-        app.getTelemetries();
+        app.getSimon();
+        app.getTouch();
+        app.getHall();
+        app.getWeb();
         app.getRobotCommands();
     },
-    'getQueue': function (queueName, containerId) {
-        var url = "/" + queueName + "/peek";
+    'getQueue': function (url, containerId) {
         var id = "#" + containerId;
         $.getJSON(
             url
@@ -24,7 +25,7 @@ var app = {
                 var colorIndex = 0;
                 $.each(data.data, function (index, item) {
                     var colorCode = "#" + Array(7).join(colorIndex.toString(16));
-                    colorIndex++;
+                    colorIndex+=2;
                     var result = "<div class=\"row\"><div class=\"col-md\" style=\"color:"+colorCode+"\">" +
                         JSON.stringify(item) +
                         "</div></div>";
@@ -33,14 +34,25 @@ var app = {
             }
         });
     },
-    'getStates': function () {
-        app.getQueue("state", "state-list");
+    'getSimon': function () {
+        var url = "/state/peek/simon";
+        app.getQueue(url, "simon-list");
     },
-    'getTelemetries': function () {
-        app.getQueue("telemetry", "telemetry-list");
+    'getHall': function () {
+        var url = "/state/peek/hall";
+        app.getQueue(url, "hall-list");
+    },
+    'getTouch': function () {
+        var url = "/state/peek/touch";
+        app.getQueue(url, "touch-list");
+    },
+    'getWeb': function () {
+        var url = "/state/peek/web";
+        app.getQueue(url, "web-list");
     },
     'getRobotCommands': function () {
-        app.getQueue("robotcommand", "robot-list");
+        var url = "/robotcommand/peek";
+        app.getQueue(url, "robot-list");
     },
     'getRobotLocation': function() {
         var url = "/robot/location";

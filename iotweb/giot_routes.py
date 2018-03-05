@@ -33,9 +33,8 @@ def post_state(device_id, key):
                     result['success'] = False
                     result['message'] = 'state not posted'
                     status_code = 400
-            else:
-                rh = RedisHelper()
-                rh.push_queue(RedisHelper.state_queue_key, state)
+            rh = RedisHelper()
+            rh.push_queue(settings.QUEUES[device_id]+"-"+RedisHelper.state_queue_key, state)
         else:
             logit("state missing")
             status_code = 400
@@ -65,9 +64,8 @@ def post_telemetry(device_id, key):
                     result['success'] = False
                     result['message'] = 'telemetry not posted'
                     status_code = 400
-            else:
-                rh = RedisHelper()
-                rh.push_queue(RedisHelper.telemetry_queue_key, telemetry)
+            rh = RedisHelper()
+            rh.push_queue(settings.QUEUES[device_id]+"-"+RedisHelper.telemetry_queue_key, telemetry)
         else:
             logit("telemetry missing")
             status_code = 400

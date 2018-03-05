@@ -43,19 +43,19 @@ def post_robot_command(key):
     return bottle.HTTPResponse(status=status_code, body=json.dumps(result))
 
 
-@get('/state/peek')
-def get_state_peek():
+@get('/state/peek/<prefix>')
+def get_state_peek(prefix):
     result = {}
     rh = RedisHelper()
-    result['data'] = rh.peek_queue(RedisHelper.state_queue_key)
+    result['data'] = rh.peek_queue(prefix+"-"+RedisHelper.state_queue_key)
     return result
 
 
-@get('/telemetry/peek')
-def get_telemetry_peek():
+@get('/telemetry/peek/<prefix>')
+def get_telemetry_peek(prefix):
     result = {}
     rh = RedisHelper()
-    result['data'] = rh.peek_queue(RedisHelper.telemetry_queue_key)
+    result['data'] = rh.peek_queue(prefix+"-"+RedisHelper.telemetry_queue_key)
     return result
 
 
@@ -67,13 +67,13 @@ def get_robotcommand_peek():
     return result
 
 
-@get('/state/pop/<key>')
-def get_state_pop(key):
+@get('/state/pop/<key>/<prefix>')
+def get_state_pop(key, prefix):
     result = {'success': False, 'message': 'not authorized'}
     status_code = 400
     if key == settings.WEB['ACCESS']:
         rh = RedisHelper()
-        result = rh.pop_queue(RedisHelper.state_queue_key)
+        result = rh.pop_queue(prefix+"_"+RedisHelper.state_queue_key)
         status_code = 200
     else:
         logit("unauthorized")
@@ -81,13 +81,13 @@ def get_state_pop(key):
     return bottle.HTTPResponse(status=status_code, body=json.dumps(result))
 
 
-@get('/telemetry/pop/<key>')
-def get_telemetry_pop(key):
+@get('/telemetry/pop/<key>/<prefix>')
+def get_telemetry_pop(key, prefix):
     result = {'success': False, 'message': 'not authorized'}
     status_code = 400
     if key == settings.WEB['ACCESS']:
         rh = RedisHelper()
-        result = rh.pop_queue(RedisHelper.telemetry_queue_key)
+        result = rh.pop_queue(prefix+"_"+RedisHelper.telemetry_queue_key)
         status_code = 200
     else:
         logit("unauthorized")
