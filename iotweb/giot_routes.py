@@ -47,7 +47,7 @@ def post_state(device_id, key):
 @post('/giot/telemetry/<device_id>/<key>')
 def post_telemetry(device_id, key):
     telemetry = request.json
-    result = {'success': False, 'message': 'telemetrynot posted'}
+    result = {'success': False, 'message': 'telemetry not posted'}
     status_code = 400
     if key == settings.IOT_GW_KEYS[device_id]:
         if telemetry is not None:

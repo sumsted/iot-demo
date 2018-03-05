@@ -30,7 +30,8 @@ def get_index():
 
 @get('/device')
 def get_index():
-    return template('device.html')
+    web_key = settings.IOT_GW_KEYS['web01']
+    return template('device.html',web_key=web_key)
 
 
 @get('/watch')
