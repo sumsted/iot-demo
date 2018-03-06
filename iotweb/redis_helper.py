@@ -33,7 +33,7 @@ class RedisHelper:
         try:
             full_key = key if prefix is None else prefix + "-" + key
             serial_json = self.r.rpop(full_key).decode()
-            return json.loads(serial_json)['data']
+            return json.loads(serial_json.decode("utf-8"))['data']
         except AttributeError:
             return None
 
@@ -45,7 +45,7 @@ class RedisHelper:
             full_key = key if prefix is None else prefix + "-" + key
             queue_list = self.r.lrange(full_key, 0, count)[::-1]
             for serial_json in queue_list:
-                result.append(json.loads(serial_json)['data'])
+                result.append(json.loads(serial_json.decode("utf-8"))['data'])
         except AttributeError:
             return None
         return result
@@ -58,7 +58,7 @@ class RedisHelper:
     def get_key(self, key):
         try:
             serial_json = self.r.get(key).decode()
-            return json.loads(serial_json)['data']
+            return json.loads(serial_json.decode("utf-8"))['data']
         except AttributeError:
             return None
 
