@@ -24,7 +24,8 @@ def post_state(device_id, key):
                 g = GiotHelper(device_id)
                 r = g.post_state(state_str)
                 if r.status_code == 200:
-                    result['data'] = json.loads(r.content.decode("utf-8"))
+                    # result['data'] = json.loads(r.content.decode("utf-8"))
+                    result['data'] = state
                     result['success'] = True
                     result['message'] = 'state posted'
                     status_code = 200
