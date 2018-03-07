@@ -80,7 +80,8 @@ body {
 }
 
 .inner {
-  width:700px;
+  max-width:600px;
+  min-width: 400px;
 }
 
 .nav-masthead .nav-link {
