@@ -19,7 +19,7 @@ def get_iot_gateway_log_peek():
 
 
 @post('/iot_gateway_log/<key>')
-def post_iot_gateway(key):
+def post_iot_gateway_log(key):
     result = {'success': False, 'message': 'not authorized'}
     status_code = 400
     if key == settings.WEB['ACCESS']:
@@ -64,6 +64,7 @@ def post_iot_gateway_queue(key):
         command = request.json
         rh = RedisHelper()
         rh.push_queue(RedisHelper.iot_gateway_queue_key, command)
+        rh.push_log(RedisHelper.iot_gateway_log_key, command)
         result = {"success": True, "message": "iot gateway queue posted"}
         status_code = 200
     else:

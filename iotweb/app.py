@@ -21,7 +21,6 @@ if __name__ == '__main__':
     run(host=settings.WEB['HOST'], port=settings.WEB['PORT'], debug=settings.WEB['DEBUG'])
 
 
-#todo trim logs
 #todo strip iot hub sample code as standalone
 #todo add tests
 

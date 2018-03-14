@@ -10,6 +10,24 @@ from redis_helper import RedisHelper
 settings = Settings()
 
 
+@post('/iot_web_hook/<key>')
+def post_iot_web_hook(key):
+    result = {'success': False, 'message': 'not authorized'}
+    status_code = 400
+    if key == settings.WEB['ACCESS']:
+        command = request.json
+        rh = RedisHelper()
+        rh.push_queue(RedisHelper.iot_web_hook_log, command)
+        result = {"success": True, "message": "iot web hook posted"}
+        status_code = 200
+
+        # todo do something with webhook call
+    else:
+        logit("unauthorized")
+        status_code = 403
+    return bottle.HTTPResponse(status=status_code, body=json.dumps(result))
+
+
 @get('/iot_web_hook_log/peek')
 def get_robot_peek():
     result = {}
@@ -18,8 +36,8 @@ def get_robot_peek():
     return result
 
 
-@post('/iot_web_hook/<key>')
-def post_iot_web_hook(key):
+@post('/iot_web_hook_log/<key>')
+def post_iot_web_hook_log(key):
     result = {'success': False, 'message': 'not authorized'}
     status_code = 400
     if key == settings.WEB['ACCESS']:
