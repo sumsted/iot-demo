@@ -8,11 +8,9 @@ var app = {
         setInterval(app.getAll, app.pauseDuration);
     },
     'getAll' : function() {
+        app.getGatewayLog();
+        app.getWebHookLog();
         app.getRobotLocation();
-        app.getSimon();
-        app.getTouch();
-        app.getHall();
-        app.getWeb();
         app.getRobotCommands();
     },
     'getQueue': function (url, containerId) {
@@ -34,24 +32,16 @@ var app = {
             }
         });
     },
-    'getSimon': function () {
-        var url = "/state/peek/simon";
-        app.getQueue(url, "simon-list");
+    'getGatewayLog': function () {
+        var url = "/iot_gateway_log/peek";
+        app.getQueue(url, "gateway-list");
     },
-    'getHall': function () {
-        var url = "/state/peek/hall";
-        app.getQueue(url, "hall-list");
-    },
-    'getTouch': function () {
-        var url = "/state/peek/touch";
-        app.getQueue(url, "touch-list");
-    },
-    'getWeb': function () {
-        var url = "/state/peek/web";
-        app.getQueue(url, "web-list");
+    'getWebHookLog': function () {
+        var url = "/iot_web_hook_log/peek";
+        app.getQueue(url, "connector-list");
     },
     'getRobotCommands': function () {
-        var url = "/robotcommand/peek";
+        var url = "/robot/peek";
         app.getQueue(url, "robot-list");
     },
     'getRobotLocation': function() {

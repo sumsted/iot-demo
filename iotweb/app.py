@@ -20,12 +20,15 @@ rh.clear()
 if __name__ == '__main__':
     run(host=settings.WEB['HOST'], port=settings.WEB['PORT'], debug=settings.WEB['DEBUG'])
 
-#todo update watch to display queues
-#todo change payload to include device
-#todo build iothub on do and test
+
+#todo trim logs
 #todo strip iot hub sample code as standalone
+#todo add tests
+
+#todo ppt
+
+#todo build iothub on do and test
 #todo add deployment script to start and stop daemon
 #todo test remotely
-#todo ppt
-#todo add tests
-#todo trim logs
+
+#todo change payload in arduino code to include device
