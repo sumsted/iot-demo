@@ -60,7 +60,7 @@ def get_iot_gateway_queue(key):
 def post_iot_gateway_queue(key):
     result = {'success': False, 'message': 'not authorized'}
     status_code = 400
-    if key == settings.WEB['ACCESS']:
+    if key in settings.WEB['ACCESS']:
         command = request.json
         rh = RedisHelper()
         rh.push_queue(RedisHelper.iot_gateway_queue_key, command)

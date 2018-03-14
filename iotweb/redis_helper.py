@@ -88,11 +88,11 @@ if __name__ == '__main__':
     poster = RedisHelper()
     peeler = RedisHelper()
 
-    poster.clear()
+    # poster.clear()
 
     state = {"color": "red"}
     poster.push_queue(RedisHelper.iot_web_hook_log, state)
-    state = {"color": "blue"}
+    state = {"color": "scott"}
     poster.push_queue(RedisHelper.iot_web_hook_log, state)
     state = {"color": "green"}
     poster.push_queue(RedisHelper.robot_queue_key, state)
@@ -107,17 +107,17 @@ if __name__ == '__main__':
     state = {"color": "purple"}
     poster.push_queue(RedisHelper.iot_gateway_log_key, state)
 
-    print(peeler.pop_queue(RedisHelper.iot_web_hook_log))
-    print(peeler.pop_queue(RedisHelper.iot_web_hook_log))
-
-    print(peeler.pop_queue(RedisHelper.robot_queue_key))
-    print(peeler.pop_queue(RedisHelper.robot_queue_key))
-
-    print(peeler.pop_queue(RedisHelper.iot_gateway_queue_key))
-    print(peeler.pop_queue(RedisHelper.iot_gateway_queue_key))
-
-    print(peeler.pop_queue(RedisHelper.iot_gateway_log_key))
-    print(peeler.pop_queue(RedisHelper.iot_gateway_log_key))
+    # print(peeler.pop_queue(RedisHelper.iot_web_hook_log))
+    # print(peeler.pop_queue(RedisHelper.iot_web_hook_log))
+    #
+    # print(peeler.pop_queue(RedisHelper.robot_queue_key))
+    # print(peeler.pop_queue(RedisHelper.robot_queue_key))
+    #
+    # print(peeler.pop_queue(RedisHelper.iot_gateway_queue_key))
+    # print(peeler.pop_queue(RedisHelper.iot_gateway_queue_key))
+    #
+    # print(peeler.pop_queue(RedisHelper.iot_gateway_log_key))
+    # print(peeler.pop_queue(RedisHelper.iot_gateway_log_key))
 
     robot_location_key = {"location": "http://192.168.2.3/robot"}
     poster.update_key(RedisHelper.robot_location_key, robot_location_key)
