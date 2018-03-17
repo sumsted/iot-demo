@@ -210,13 +210,13 @@ def iothub_client_daemon_run():
                                            SEND_REPORTED_STATE_CONTEXT)
 
             message = IoTHubMessage(message_serial)
-            message_id = str(time.time())
-            message.message_id = "message_%s" % message_id
+            message_id = int(str(time.time()).replace('.', ''))
+            message.message_id = "message_%d" % message_id
 
             client.send_event_async(message, send_confirmation_callback, message_id)
             logit(
                 "IoTHubClient.send_event_async accepted message [%d] for transmission to IoT Hub." % message_id)
-            status = client.get_send_status(client)
+            status = client.get_send_status()
             logit("Send status: %s" % status)
 
             # Wait for Commands or exit

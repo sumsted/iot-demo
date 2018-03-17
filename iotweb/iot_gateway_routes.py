@@ -56,16 +56,22 @@ def get_iot_gateway_queue(key):
     return bottle.HTTPResponse(status=status_code, body=json.dumps(result))
 
 
-@post('/iot_gateway_queue/<key>')
-def post_iot_gateway_queue(key):
+@post('/iot_gateway_queue/<device_key>')
+def post_iot_gateway_queue(device_key):
+    # todo accept key to determine device
+    # todo build queue object {'connection string', 'payload'}
     result = {'success': False, 'message': 'not authorized'}
     status_code = 400
-    if key in settings.WEB['ACCESS']:
-        command = request.json
+    if device_key in settings.IOT_GW_DEVICE_KEYS:
+        message = request.json
+        queue_object = {
+            'connection_string': settings.IOT_GW_CONNECTION_STRINGS[settings.IOT_GW_DEVICE_KEYS[device_key]],
+            'message': message
+        }
         rh = RedisHelper()
-        rh.push_queue(RedisHelper.iot_gateway_queue_key, command)
-        rh.push_log(RedisHelper.iot_gateway_log_key, command)
-        result = {"success": True, "message": "iot gateway queue posted"}
+        rh.push_queue(RedisHelper.iot_gateway_queue_key, queue_object)
+        rh.push_log(RedisHelper.iot_gateway_log_key, message)
+        result = {"success": True, "message": "iot gateway queue posted", "message": message}
         status_code = 200
     else:
         logit("unauthorized")

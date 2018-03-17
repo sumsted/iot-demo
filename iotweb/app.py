@@ -21,7 +21,6 @@ if __name__ == '__main__':
     run(host=settings.WEB['HOST'], port=settings.WEB['PORT'], debug=settings.WEB['DEBUG'])
 
 
-#todo strip iot hub sample code as standalone
 #todo add tests
 
 #todo ppt
@@ -29,5 +28,7 @@ if __name__ == '__main__':
 #todo build iothub on do and test
 #todo add deployment script to start and stop daemon
 #todo test remotely
+
+#todo get webhook working
 
 #todo change payload in arduino code to include device

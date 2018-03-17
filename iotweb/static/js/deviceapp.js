@@ -5,7 +5,7 @@ var app = {
         $("#sad-icon").on("click", app.postSad);
     },
     'postDevice': function (kind) {
-        var url = "/iot_gateway_queue/" + web_key;
+        var url = "/iot_gateway_queue/" + device_key;
         var id = "#result";
         var state = {"device": "web01", "state": kind};
         $.ajax(
