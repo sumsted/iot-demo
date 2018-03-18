@@ -23,12 +23,12 @@ if __name__ == '__main__':
 
 #todo add tests
 
-#todo ppt
-
-#todo build iothub on do and test
-#todo add deployment script to start and stop daemon
-#todo test remotely
-
+#todo pretty up watch page
 #todo get webhook working
+#todo robot code
+#todo configure salesforce
 
 #todo change payload in arduino code to include device
+
+#todo test in room
+#todo practice

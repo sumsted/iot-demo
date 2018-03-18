@@ -191,11 +191,11 @@ def iothub_client_init(connection_string, protocol):
     retry_policy = IoTHubClientRetryPolicy.RETRY_INTERVAL
     retry_interval = 100
     client.set_retry_policy(retry_policy, retry_interval)
-    # logit("INIT: SetRetryPolicy to: retry_policy = %d" % retry_policy)
-    # logit("INIT: SetRetryPolicy to: retryTimeoutLimitInSeconds = %d" % retry_interval)
+    # logit("INIT: SetRetryPolicy to: retry_policy = %d" % retry_policy, "DEBUG")
+    # logit("INIT: SetRetryPolicy to: retryTimeoutLimitInSeconds = %d" % retry_interval, "DEBUG")
     retry_policy_return = client.get_retry_policy()
-    # logit("INIT: GetRetryPolicy returned: retry_policy = %d" % retry_policy_return.retryPolicy)
-    # logit("INIT: GetRetryPolicy returned: retryTimeoutLimitInSeconds = %d" % retry_policy_return.retryTimeoutLimitInSeconds)
+    # logit("INIT: GetRetryPolicy returned: retry_policy = %d" % retry_policy_return.retryPolicy, "DEBUG")
+    # logit("INIT: GetRetryPolicy returned: retryTimeoutLimitInSeconds = %d" % retry_policy_return.retryTimeoutLimitInSeconds, "DEBUG")
     logit("INIT: new client")
     return client
 
