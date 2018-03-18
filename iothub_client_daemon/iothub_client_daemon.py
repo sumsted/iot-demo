@@ -119,7 +119,7 @@ def connection_status_callback(result, reason, user_context):
 def device_twin_callback(update_state, payload, user_context):
     global TWIN_CALLBACKS
     TWIN_CALLBACKS += 1
-    logit("TWIN CB: [%d], updateStatus: %s, context: %s, payload: %s", (
+    logit("TWIN CB: [%d], updateStatus: %s, context: %s, payload: %s" % (
         TWIN_CALLBACKS, update_state, user_context, payload
     ))
 
