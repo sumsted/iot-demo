@@ -57,6 +57,22 @@ METHOD_CALLBACKS = 0
 PROTOCOL = IoTHubTransportProvider.MQTT
 
 
+def start():
+    if settings.IOT_GATEWAY['protocol'] == 'HTTP':
+        PROTOCOL = IoTHubTransportProvider.HTTP
+    elif settings.IOT_GATEWAY['protocol'] == 'MQTT':
+        PROTOCOL = IoTHubTransportProvider.MQTT
+    else:
+        PROTOCOL = IoTHubTransportProvider.HTTP
+
+    logit("\nPython %s" % sys.version)
+    logit("IoT Hub client gateway for constrained devices.")
+    logit("    Protocol %s" % PROTOCOL)
+    logit("    Queue %s:%s" % (settings.REDIS['HOST'], settings.REDIS['PORT']))
+
+    iothub_client_daemon_run()
+
+
 # some embedded platforms need certificate information
 def set_certificates(client):
     from iothub_client_cert import CERTIFICATES
@@ -232,17 +248,4 @@ def iothub_client_daemon_run():
 
 
 if __name__ == '__main__':
-
-    if settings.IOT_GATEWAY['protocol'] == 'HTTP':
-        PROTOCOL = IoTHubTransportProvider.HTTP
-    elif settings.IOT_GATEWAY['protocol'] == 'MQTT':
-        PROTOCOL = IoTHubTransportProvider.MQTT
-    else:
-        PROTOCOL = IoTHubTransportProvider.HTTP
-
-    logit("\nPython %s" % sys.version)
-    logit("IoT Hub client gateway for constrained devices.")
-    logit("    Protocol %s" % PROTOCOL)
-    logit("    Queue %s:%s" % (settings.REDIS['HOST'], settings.REDIS['PORT']))
-
-    iothub_client_daemon_run()
+    start()
