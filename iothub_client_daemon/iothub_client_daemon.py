@@ -203,7 +203,7 @@ def iothub_client_daemon_run():
         queue_name = settings.IOT_GATEWAY['iot_gateway_queue']
         while True:
             queue_object = rh.pop_queue(queue_name)
-
+            logit("**>>**>> queue object found %s" % str(queue_object))
             try:
                 connection_string = queue_object['connection_string']
                 message_serial = json.dumps(queue_object['message'])
