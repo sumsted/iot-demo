@@ -78,9 +78,9 @@ def set_certificates(client):
     from iothub_client_cert import CERTIFICATES
     try:
         client.set_option("TrustedCerts", CERTIFICATES)
-        logit("set_option TrustedCerts successful")
+        logit("CERTS: set_option TrustedCerts successful")
     except IoTHubClientError as iothub_client_error:
-        logit("set_option TrustedCerts failed (%s)" % iothub_client_error)
+        logit("CERTS: set_option TrustedCerts failed (%s)" % iothub_client_error, "ERROR")
 
 
 def receive_message_callback(message, counter):
@@ -100,50 +100,49 @@ def receive_message_callback(message, counter):
 
 def send_confirmation_callback(message, result, user_context):
     global SEND_CALLBACKS
-    logit("Confirmation[%d] received for message with result = %s" % (user_context, result))
-    map_properties = message.properties()
-    logit("    message_id: %s" % message.message_id)
-    logit("    correlation_id: %s" % message.correlation_id)
-    key_value_pair = map_properties.get_internals()
-    logit("    Properties: %s" % key_value_pair)
     SEND_CALLBACKS += 1
-    logit("    Total calls confirmed: %d" % SEND_CALLBACKS)
+    logit("CONFIRMATION CB: [%d][%d] received for message %s, correlation %s, with result = %s" % (
+        user_context, SEND_CALLBACKS, message.message_id, message.correlation_id,  result))
 
 
 def connection_status_callback(result, reason, user_context):
     global CONNECTION_STATUS_CALLBACKS
-    logit("Connection status changed[%d] with:" % user_context)
-    logit("    reason: %d" % reason)
-    logit("    result: %s" % result)
     CONNECTION_STATUS_CALLBACKS += 1
-    logit("    Total calls confirmed: %d" % CONNECTION_STATUS_CALLBACKS)
+    logit("CONNECTION STATUS CB: [%d] status changed[%d], reason: %d, result: %s" % (
+        CONNECTION_STATUS_CALLBACKS,
+        user_context,
+        reason,
+        result
+    ))
 
 
 def device_twin_callback(update_state, payload, user_context):
     global TWIN_CALLBACKS
-    logit("")
-    logit("Twin callback called with:")
-    logit("updateStatus: %s" % update_state)
-    logit("context: %s" % user_context)
-    logit("payload: %s" % payload)
     TWIN_CALLBACKS += 1
-    logit("Total calls confirmed: %d\n" % TWIN_CALLBACKS)
+    logit("TWIN CB: [%d], updateStatus: %s, context: %s, payload: %s", (
+        TWIN_CALLBACKS, update_state, user_context, payload
+    ))
 
 
 def send_reported_state_callback(status_code, user_context):
     global SEND_REPORTED_STATE_CALLBACKS
-    logit("Confirmation[%d] for reported state received with:" % user_context)
-    logit("    status_code: %d" % status_code)
     SEND_REPORTED_STATE_CALLBACKS += 1
-    logit("    Total calls confirmed: %d" % SEND_REPORTED_STATE_CALLBACKS)
+    logit("SEND REPORTED STATE CB: %d Confirmation[%d], status_code: %d" % (
+        SEND_REPORTED_STATE_CALLBACKS,
+        user_context,
+        status_code
+    ))
 
 
 def device_method_callback(method_name, payload, user_context):
     global METHOD_CALLBACKS
-    logit("\nMethod callback called with:\nmethodName = %s\npayload = %s\ncontext = %s" % (
-        method_name, payload, user_context))
     METHOD_CALLBACKS += 1
-    logit("Total calls confirmed: %d\n" % METHOD_CALLBACKS)
+    logit("DEVICE METHOD CB: [%d] methodName: %s, payload: %s, context: %s" % (
+        METHOD_CALLBACKS,
+        method_name,
+        payload,
+        user_context
+    ))
     device_method_return_value = DeviceMethodReturnValue()
     device_method_return_value.response = "{ \"Response\": \"This is the response from the device\" }"
     device_method_return_value.status = 200
@@ -153,11 +152,13 @@ def device_method_callback(method_name, payload, user_context):
 def print_last_message_time(client):
     try:
         last_message = client.get_last_message_receive_time()
-        logit("Last Message: %s" % time.asctime(time.localtime(last_message)))
-        logit("Actual time : %s" % time.asctime())
+        logit("LAST MESSAGE TIME: Last: %s, Actual: %s" % (
+            time.asctime(time.localtime(last_message)),
+            time.asctime()
+        ))
     except IoTHubClientError as iothub_client_error:
         if iothub_client_error.args[0].result == IoTHubClientResult.INDEFINITE_TIME:
-            logit("No message received")
+            logit("LAST_MESSAGE_TIME: No message received")
         else:
             logit(iothub_client_error)
 
@@ -189,11 +190,12 @@ def iothub_client_init(connection_string, protocol):
     retry_policy = IoTHubClientRetryPolicy.RETRY_INTERVAL
     retry_interval = 100
     client.set_retry_policy(retry_policy, retry_interval)
-    logit("SetRetryPolicy to: retry_policy = %d" % retry_policy)
-    logit("SetRetryPolicy to: retryTimeoutLimitInSeconds = %d" % retry_interval)
+    # logit("INIT: SetRetryPolicy to: retry_policy = %d" % retry_policy)
+    # logit("INIT: SetRetryPolicy to: retryTimeoutLimitInSeconds = %d" % retry_interval)
     retry_policy_return = client.get_retry_policy()
-    logit("GetRetryPolicy returned: retry_policy = %d" % retry_policy_return.retryPolicy)
-    logit("GetRetryPolicy returned: retryTimeoutLimitInSeconds = %d" % retry_policy_return.retryTimeoutLimitInSeconds)
+    # logit("INIT: GetRetryPolicy returned: retry_policy = %d" % retry_policy_return.retryPolicy)
+    # logit("INIT: GetRetryPolicy returned: retryTimeoutLimitInSeconds = %d" % retry_policy_return.retryTimeoutLimitInSeconds)
+    logit("INIT: new client")
     return client
 
 
@@ -203,22 +205,22 @@ def iothub_client_daemon_run():
         queue_name = settings.IOT_GATEWAY['iot_gateway_queue']
         while True:
             queue_object = rh.pop_queue(queue_name)
-            logit("**>>**>> queue object found %s" % str(queue_object))
             try:
                 connection_string = queue_object['connection_string']
                 message_serial = json.dumps(queue_object['message'])
+                logit("FOUND: queue object %s" % str(queue_object))
             except KeyError:
-                logit("improperly formatted gateway queue object %s" % str(queue_object))
+                logit("BAD FORMAT: improperly formatted gateway queue object %s" % str(queue_object), "ERROR")
                 time.sleep(QUEUE_CHECK_DELAY)
                 continue
             except TypeError:
-                logit("gateway queue is empty")
+                logit("EMPTY: gateway queue is empty")
                 time.sleep(QUEUE_CHECK_DELAY)
                 continue
 
             client = iothub_client_init(connection_string, PROTOCOL)
             if client.protocol == IoTHubTransportProvider.MQTT:
-                logit("IoTHubClient is reporting state")
+                logit("MQTT: IoTHubClient is reporting state")
                 reported_state = "{\"newState\":\"standBy\"}"
                 client.send_reported_state(reported_state,
                                            len(reported_state),
@@ -231,20 +233,20 @@ def iothub_client_daemon_run():
 
             client.send_event_async(message, send_confirmation_callback, message_id)
             logit(
-                "IoTHubClient.send_event_async accepted message [%d] for transmission to IoT Hub." % message_id)
-            status = client.get_send_status()
-            logit("Send status: %s" % status)
+                "SENT: IoTHubClient.send_event_async accepted message [%d] for transmission to IoT Hub." % message_id)
+            # status = client.get_send_status()
+            # logit("Send status: %s" % status)
 
             # Wait for Commands or exit
-            logit("IoTHubClient waiting for commands, press Ctrl-C to exit")
+            logit("WAIT: IoTHubClient waiting for commands, press Ctrl-C to exit")
 
             time.sleep(QUEUE_CHECK_DELAY)
 
     except IoTHubError as iothub_error:
-        logit("Unexpected error %s from IoTHub" % iothub_error)
+        logit("Unexpected error %s from IoTHub" % iothub_error, "ERROR")
         return
     except KeyboardInterrupt:
-        logit("IoTHubClient daemon stopped")
+        logit("STOP: IoTHubClient daemon stopped")
 
 
 if __name__ == '__main__':
