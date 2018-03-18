@@ -17,7 +17,8 @@ from logit import logit
 
 settings = Settings()
 
-QUEUE_CHECK_DELAY = 5
+QUEUE_SEND_DELAY = 2
+QUEUE_WAIT_DELAY = 10
 
 # HTTP options
 # Because it can poll "after 9 seconds" polls will happen effectively
@@ -211,11 +212,11 @@ def iothub_client_daemon_run():
                 logit("FOUND: queue object %s" % str(queue_object))
             except KeyError:
                 logit("BAD FORMAT: improperly formatted gateway queue object %s" % str(queue_object), "ERROR")
-                time.sleep(QUEUE_CHECK_DELAY)
+                time.sleep(QUEUE_SEND_DELAY)
                 continue
             except TypeError:
                 logit("EMPTY: gateway queue is empty")
-                time.sleep(QUEUE_CHECK_DELAY)
+                time.sleep(QUEUE_WAIT_DELAY)
                 continue
 
             client = iothub_client_init(connection_string, PROTOCOL)
@@ -240,7 +241,7 @@ def iothub_client_daemon_run():
             # Wait for Commands or exit
             logit("WAIT: IoTHubClient waiting for commands, press Ctrl-C to exit")
 
-            time.sleep(QUEUE_CHECK_DELAY)
+            time.sleep(QUEUE_SEND_DELAY)
 
     except IoTHubError as iothub_error:
         logit("Unexpected error %s from IoTHub" % iothub_error, "ERROR")
