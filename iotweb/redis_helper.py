@@ -58,7 +58,6 @@ class RedisHelper:
             full_key = key if prefix is None else prefix + "-" + key
             queue_list = self.r.lrange(full_key, 0, count)
             for serial_json in queue_list:
-                result.append(json.loads(serial_json.decode("utf-8"))['data'])
                 try:
                     result.append(json.loads(serial_json.decode("utf-8"))['data'])
                 except AttributeError:

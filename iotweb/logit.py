@@ -1,5 +1,6 @@
 import inspect
 import time
+import sys
 
 
 def logit(message, level="INFO"):
@@ -13,3 +14,4 @@ def logit(message, level="INFO"):
         module_name = ''
     print('%s: %s: %s: %d: %s' % (
         time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime()), level, module_name, line_number, str(message)))
+    sys.stdout.flush()
