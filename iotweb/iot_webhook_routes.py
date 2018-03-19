@@ -17,7 +17,7 @@ def post_iot_web_hook():
     key = request.query.key
     payload = request.json
     azure_event_grid_header = request.get_header('Aeg-Event-Type')
-    logit("IOT WEB HOOK: payload: %s, header%s" % (str(payload), azure_event_grid_header))
+    logit("IOT WEB HOOK: key:%s, payload: %s, header%s" % (key, str(payload), azure_event_grid_header))
     if azure_event_grid_header == 'SubscriptionValidation':
         validation_code = payload[0]['data']['validationCode']
         validation_response = {'validationResponse': validation_code}

@@ -1,0 +1,47 @@
+[
+  {
+    'eventType': 'Microsoft.Devices.DeviceDeleted',
+    'id': '2a99d135-f39c-abb5-e8fd-aa317c0e6c9e',
+    'metadataVersion': '1',
+    'eventTime': '2018-03-19T03:12:30.9363265Z',
+    'topic': '/SUBSCRIPTIONS/DE5107F5-E831-456E-8A74-EE0F476754B7/RESOURCEGROUPS/CONSTRAINEDDEVICESZ/PROVIDERS/MICROSOFT.DEVICES/IOTHUBS/SCOTTSTHINGS',
+    'dataVersion': '',
+    'data': {
+      'opType': 'DeviceDeleted',
+      'hubName': 'scottsthings',
+      'deviceId': 'WEB02',
+      'twin': {
+        'x509Thumbprint': {
+          'primaryThumbprint': None,
+          'secondaryThumbprint': None
+        },
+        'version': 2,
+        'cloudToDeviceMessageCount': 0,
+        'properties': {
+          'reported': {
+            '$version': 1,
+            '$metadata': {
+              '$lastUpdated': '2018-03-19T03:11:37.8161625Z'
+            }
+          },
+          'desired': {
+            '$version': 1,
+            '$metadata': {
+              '$lastUpdated': '2018-03-19T03:11:37.8161625Z'
+            }
+          }
+        },
+        'etag': 'AAAAAAAAAAE=',
+        'deviceEtag': None,
+        'deviceId': 'WEB02',
+        'connectionState': 'Disconnected',
+        'status': 'enabled',
+        'statusUpdateTime': '0001-01-01T00:00:00',
+        'lastActivityTime': '0001-01-01T00:00:00',
+        'authenticationType': 'sas'
+      },
+      'operationTimestamp': '2018-03-19T03:12:30.9363265Z'
+    },
+    'subject': 'devices/WEB02'
+  }
+]
