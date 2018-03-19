@@ -22,6 +22,7 @@ def post_iot_web_hook():
         validation_code = payload[0]['data']['validationCode']
         validation_response = {'validationResponse': validation_code}
         logit("AZURE VALIDATION RESPONSE: %s" % str(validation_response))
+        return validation_response
     elif key == settings.WEB['ACCESS']:
         command = request.json
         rh = RedisHelper()
