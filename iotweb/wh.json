@@ -1,0 +1,14 @@
+[
+  {
+    'topic': '/subscriptions/de5107f5-e831-456e-8a74-ee0f476754b7/resourceGroups/constraineddevicesz/providers/microsoft.devices/iothubs/scottsthings',
+    'eventTime': '2018-03-19T02:30:54.4656383Z',
+    'metadataVersion': '1',
+    'subject': '',
+    'eventType': 'Microsoft.EventGrid.SubscriptionValidationEvent',
+    'dataVersion': '1',
+    'id': '36b0414d-2a3a-4aac-9728-67d89668eebf',
+    'data': {
+      'validationCode': 'c66c0058-8a5a-41cc-bfbf-66f3ad93e294'
+    }
+  }
+]

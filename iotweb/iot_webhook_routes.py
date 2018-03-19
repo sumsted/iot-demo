@@ -10,17 +10,17 @@ from redis_helper import RedisHelper
 settings = Settings()
 
 
-@post('/webhook')
-def post_webhook():
-    payload = request.json
-    logit("WEBHOOK"+str(payload))
-
-
-@post('/iot_web_hook/<key>')
-def post_iot_web_hook(key):
+@post('/iot_web_hook/')
+def post_iot_web_hook():
     result = {'success': False, 'message': 'not authorized'}
     status_code = 400
-    if key == settings.WEB['ACCESS']:
+    key = request.query.key
+    payload = request.json
+    azure_event_grid_header = request.get_header('Aeg-Event-Type')
+    if azure_event_grid_header == 'SubscriptionValidation':
+        validation_code = payload[0]['data']['validationCode']
+        return {'validationResponse': validation_code}
+    elif key == settings.WEB['ACCESS']:
         command = request.json
         rh = RedisHelper()
         rh.push_queue(RedisHelper.iot_web_hook_log, command)
