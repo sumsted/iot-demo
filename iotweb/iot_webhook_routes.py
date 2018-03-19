@@ -10,6 +10,12 @@ from redis_helper import RedisHelper
 settings = Settings()
 
 
+@post('/webhook')
+def post_webhook():
+    payload = request.json
+    logit("WEBHOOK"+str(payload))
+
+
 @post('/iot_web_hook/<key>')
 def post_iot_web_hook(key):
     result = {'success': False, 'message': 'not authorized'}
