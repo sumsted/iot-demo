@@ -30,7 +30,7 @@ def get_index():
 
 @get('/device')
 def get_index():
-    device_key = settings.WEB['DEVICE_KEY']
+    device_key = {v: k for k, v in settings.IOT_GW_DEVICE_KEYS.items()}['WEB01']
     return template('device.html', device_key=device_key)
 
 

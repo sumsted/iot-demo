@@ -1,3 +1,4 @@
+import datetime
 import json
 
 import bottle
@@ -64,8 +65,9 @@ def post_iot_gateway_queue(device_key):
     status_code = 400
     if device_key in settings.IOT_GW_DEVICE_KEYS:
         message = request.json
+        message['timestamp'] = '{:%Y-%m-%d %H:%M:%S.%f}'.format(datetime.datetime.now())
         queue_object = {
-            'connection_string': settings.IOT_GW_CONNECTION_STRINGS[settings.IOT_GW_DEVICE_KEYS[device_key]],
+            'device_id': settings.IOT_GW_DEVICE_KEYS[device_key],
             'message': message
         }
         rh = RedisHelper()

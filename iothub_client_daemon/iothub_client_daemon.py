@@ -205,9 +205,12 @@ def iothub_client_daemon_run():
         rh = RedisHelper()
         queue_name = settings.IOT_GATEWAY['iot_gateway_queue']
         while True:
+            message_serial = None
+            connection_string = None
             queue_object = rh.pop_queue(queue_name)
             try:
-                connection_string = queue_object['connection_string']
+                device_id = queue_object['device_id']
+                connection_string = settings.IOT_GW_CONNECTION_STRINGS[device_id]
                 message_serial = json.dumps(queue_object['message'])
                 logit("FOUND: queue object %s" % str(queue_object))
             except KeyError:
@@ -218,7 +221,10 @@ def iothub_client_daemon_run():
                 logit("EMPTY: gateway queue is empty")
                 time.sleep(QUEUE_WAIT_DELAY)
                 continue
+            except Exception as e:
+                logit("OOPS: exception parsing queue_object %s" % str(e), "ERROR")
 
+            logit("SENDING MESSAGE: preparing to send message")
             client = iothub_client_init(connection_string, PROTOCOL)
             if client.protocol == IoTHubTransportProvider.MQTT:
                 logit("MQTT: IoTHubClient is reporting state")
