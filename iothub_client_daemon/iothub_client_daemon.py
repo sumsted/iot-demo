@@ -100,51 +100,6 @@ def send_confirmation_callback(message, result, user_context):
     logit("CONFIRMATION CB: [%d][%d] received for message %s, correlation %s, with result = %s" % (
         user_context, SEND_CALLBACKS, message.message_id, message.correlation_id,  result))
 
-#
-# def connection_status_callback(result, reason, user_context):
-#     global CONNECTION_STATUS_CALLBACKS
-#     CONNECTION_STATUS_CALLBACKS += 1
-#     logit("CONNECTION STATUS CB: [%d] status changed[%d], reason: %d, result: %s" % (
-#         CONNECTION_STATUS_CALLBACKS,
-#         user_context,
-#         reason,
-#         result
-#     ))
-#
-#
-# def device_twin_callback(update_state, payload, user_context):
-#     global TWIN_CALLBACKS
-#     TWIN_CALLBACKS += 1
-#     logit("TWIN CB: [%d], updateStatus: %s, context: %s, payload: %s" % (
-#         TWIN_CALLBACKS, update_state, user_context, payload
-#     ))
-#
-#
-# def send_reported_state_callback(status_code, user_context):
-#     global SEND_REPORTED_STATE_CALLBACKS
-#     SEND_REPORTED_STATE_CALLBACKS += 1
-#     logit("SEND REPORTED STATE CB: %d Confirmation[%d], status_code: %d" % (
-#         SEND_REPORTED_STATE_CALLBACKS,
-#         user_context,
-#         status_code
-#     ))
-#
-#
-# def device_method_callback(method_name, payload, user_context):
-#     global METHOD_CALLBACKS
-#     METHOD_CALLBACKS += 1
-#     logit("DEVICE METHOD CB: [%d] methodName: %s, payload: %s, context: %s" % (
-#         METHOD_CALLBACKS,
-#         method_name,
-#         payload,
-#         user_context
-#     ))
-#     device_method_return_value = DeviceMethodReturnValue()
-#     device_method_return_value.response = "{ \"Response\": \"This is the response from the device\" }"
-#     device_method_return_value.status = 200
-#     return device_method_return_value
-
-
 def print_last_message_time(client):
     try:
         last_message = client.get_last_message_receive_time()
@@ -169,29 +124,11 @@ def iothub_client_init(connection_string, protocol):
         client.set_option("messageTimeout", MESSAGE_TIMEOUT)
     # some embedded platforms need certificate information
     set_certificates(client)
-    # to enable MQTT logging set to 1
-    # todo maybe disable all these chatty callbacks
-    # if client.protocol == IoTHubTransportProvider.MQTT:
-    #     client.set_option("logtrace", 0)
-    #     client.set_message_callback(
-    #         receive_message_callback, RECEIVE_CONTEXT)
-    # if client.protocol == IoTHubTransportProvider.MQTT or client.protocol == IoTHubTransportProvider.MQTT_WS:
-    #     client.set_device_twin_callback(
-    #         device_twin_callback, TWIN_CONTEXT)
-    #     client.set_device_method_callback(
-    #         device_method_callback, METHOD_CONTEXT)
-    # if client.protocol == IoTHubTransportProvider.AMQP or client.protocol == IoTHubTransportProvider.AMQP_WS:
-    #     client.set_connection_status_callback(
-    #         connection_status_callback, CONNECTION_STATUS_CONTEXT)
 
     retry_policy = IoTHubClientRetryPolicy.RETRY_INTERVAL
     retry_interval = 100
     client.set_retry_policy(retry_policy, retry_interval)
-    # logit("INIT: SetRetryPolicy to: retry_policy = %d" % retry_policy, "DEBUG")
-    # logit("INIT: SetRetryPolicy to: retryTimeoutLimitInSeconds = %d" % retry_interval, "DEBUG")
     retry_policy_return = client.get_retry_policy()
-    # logit("INIT: GetRetryPolicy returned: retry_policy = %d" % retry_policy_return.retryPolicy, "DEBUG")
-    # logit("INIT: GetRetryPolicy returned: retryTimeoutLimitInSeconds = %d" % retry_policy_return.retryTimeoutLimitInSeconds, "DEBUG")
     logit("INIT: new client")
     return client
 
@@ -222,13 +159,6 @@ def iothub_client_daemon_run():
 
             logit("SENDING MESSAGE: preparing to send message")
             client = iothub_client_init(connection_string, PROTOCOL)
-            # if client.protocol == IoTHubTransportProvider.MQTT:
-            #     logit("MQTT: IoTHubClient is reporting state")
-            #     reported_state = "{\"newState\":\"standBy\"}"
-            #     client.send_reported_state(reported_state,
-            #                                len(reported_state),
-            #                                send_reported_state_callback,
-            #                                SEND_REPORTED_STATE_CONTEXT)
 
             message = IoTHubMessage(message_serial)
             message_id = int(str(time.time()).replace('.', ''))
@@ -236,12 +166,8 @@ def iothub_client_daemon_run():
 
             client.send_event_async(message, send_confirmation_callback, message_id)
             logit(
-                "SENT: IoTHubClient.send_event_async accepted message [%d] for transmission to IoT Hub." % message_id)
-            # status = client.get_send_status()
-            # logit("Send status: %s" % status)
-
-            # Wait for Commands or exit
-            logit("WAIT: IoTHubClient waiting for commands, press Ctrl-C to exit")
+                "SENT: IoTHubClient.send_event_async accepted message [%d] for transmission to IoT Hub." % message_id
+            )
 
             time.sleep(QUEUE_SEND_DELAY)
 
