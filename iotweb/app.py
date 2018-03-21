@@ -24,7 +24,6 @@ if __name__ == '__main__':
 #todo add tests
 
 #todo pretty up watch page
-#todo get webhook working
 #todo robot code
 #todo configure salesforce
 
