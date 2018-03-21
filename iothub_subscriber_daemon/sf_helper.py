@@ -12,6 +12,7 @@ settings = Settings()
 from logit import logit
 
 import logging
+
 try:
     import http.client as http_client
 except ImportError:
@@ -25,6 +26,7 @@ logging.getLogger().setLevel(logging.DEBUG)
 requests_log = logging.getLogger("requests.packages.urllib3")
 requests_log.setLevel(logging.DEBUG)
 requests_log.propagate = True
+
 
 class SfHelper:
     instance = None
@@ -153,6 +155,5 @@ if __name__ == '__main__':
         "state__c": 'yes'
     }
     response = sh.post_json(url, event_object)
-
 
     pass
