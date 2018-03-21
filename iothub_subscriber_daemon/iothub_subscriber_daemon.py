@@ -4,6 +4,8 @@ from azure.servicebus import ServiceBusService, Message, Queue
 from settings import Settings
 from logit import logit
 from sf_helper import SfHelper
+from redis_helper import RedisHelper
+
 
 settings = Settings()
 
@@ -23,6 +25,7 @@ class SubscriberDaemon:
         )
         self.queue_name = settings.IOT_SUBSCRIBER['QUEUE_NAME']
         logit("SUBSCRIBER INIT: bus service and queue identified")
+        self.rh = RedisHelper()
 
     def start(self):
         logit("START")
@@ -32,6 +35,7 @@ class SubscriberDaemon:
                 message = self.bus_service.receive_queue_message(self.queue_name, peek_lock=False)
                 if message.body is not None:
                     logit("MESSAGE: %s" % str(message.body))
+                    self.log_event(message)
                     self.route(message)
                 else:
                     logit("MESSAGE: is empty")
@@ -40,6 +44,9 @@ class SubscriberDaemon:
             logit("STOP: IoTHubClient daemon stopped")
         except Exception as e:
             logit("ERROR: exception %s" % str(e))
+
+    def log_event(self, message):
+        rh.push_log(RedisHelper.iot_subscriber_log, message.body)
 
     def route(self, message):
         device_id = message.custom_properties['iothub-connection-device-id']

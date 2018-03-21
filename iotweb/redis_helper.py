@@ -10,9 +10,9 @@ class RedisHelper:
     iot_gateway_queue_key = settings.IOT_GATEWAY['iot_gateway_queue']
     iot_gateway_log_key = settings.IOT_GATEWAY['iot_gateway_log']
 
-    iot_web_hook_log = settings.IOT_WEB_HOOK['iot_web_hook_log']
-    robot_location_key = settings.IOT_WEB_HOOK['robot_location']
-    robot_queue_key = settings.IOT_WEB_HOOK['robot_queue']
+    iot_subscriber_log = settings.IOT_SUBSCRIBER['iot_subscriber_log']
+    robot_location_key = settings.IOT_SUBSCRIBER['robot_location']
+    robot_queue_key = settings.IOT_SUBSCRIBER['robot_queue']
 
     def __init__(self):
         self.r = redis.Redis(settings.REDIS['HOST'], int(settings.REDIS['PORT']))
