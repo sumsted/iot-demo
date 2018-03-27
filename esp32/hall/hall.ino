@@ -1,4 +1,5 @@
 #include "requests.h"
+#include "devices.h"
 
 #define TICK_LIGHT 25
 #define LED_BLINK_DELAY 50
@@ -61,7 +62,7 @@ void loop() {
 
     currentMillis = millis();
     if(currentMillis - lastPostMillis  > POST_WINDOW){
-        r->postAdaIo("scottumsted", "simon.rpm", rpm);
+        r->postEvent(rpm);
         Serial.println("post");
         lastPostMillis = currentMillis;
     }
@@ -85,13 +86,16 @@ ConfigurationUnion *defaultConfig(){
     strcpy(cu->configuration.deviceId, "HALL01");
     strcpy(cu->configuration.model, "ESP32");
     strcpy(cu->configuration.firmware, "1.0");
-    strcpy(cu->configuration.wifiSsid, "u1002");
-    strcpy(cu->configuration.wifiPassword, "e4fac6c7");
+    strcpy(cu->configuration.wifiSsid, GATEWAY_WIFI_SSID);
+    strcpy(cu->configuration.wifiPassword, GATEWAY_WIFI_PASSWORD);
     strcpy(cu->configuration.location, "Home");
-    strcpy(cu->configuration.gatewayProtocol,"https");
-    strcpy(cu->configuration.gatewayHost,"io.adafruit.com");
+//    strcpy(cu->configuration.gatewayProtocol,"https");
+//    strcpy(cu->configuration.gatewayHost,"iotis.fun");
+    strcpy(cu->configuration.gatewayProtocol,"http");
+    strcpy(cu->configuration.gatewayHost,"192.168.2.32:8080");
     cu->configuration.gatewayPort = 443;
-    strcpy(cu->configuration.gatewayPath,"/users");
+    strcpy(cu->configuration.gatewayPath,"iot_gateway_queue");
+    strcpy(cu->configuration.gatewayDeviceKey, HALL01_GATEWAY_KEY);
     strcpy(cu->configuration.state[1],"1");
     strcpy(cu->configuration.state[2],"2");
     strcpy(cu->configuration.state[3],"3");

@@ -10,7 +10,7 @@ class RedisHelper:
     iot_gateway_queue_key = settings.IOT_GATEWAY['iot_gateway_queue']
     iot_gateway_log_key = settings.IOT_GATEWAY['iot_gateway_log']
 
-    iot_subscriber_log = settings.IOT_SUBSCRIBER['iot_subscriber_log']
+    iot_subscriber_log_key = settings.IOT_SUBSCRIBER['iot_subscriber_log']
     robot_location_key = settings.IOT_SUBSCRIBER['robot_location']
     robot_queue_key = settings.IOT_SUBSCRIBER['robot_queue']
 
@@ -18,9 +18,9 @@ class RedisHelper:
         self.r = redis.Redis(settings.REDIS['HOST'], int(settings.REDIS['PORT']))
 
     def clear(self):
+        self.r.delete(RedisHelper.iot_gateway_queue_key)
         self.r.delete(RedisHelper.iot_gateway_log_key)
-        self.r.delete(RedisHelper.iot_gateway_log_key)
-        self.r.delete(RedisHelper.iot_web_hook_log)
+        self.r.delete(RedisHelper.iot_subscriber_log_key)
         self.r.delete(RedisHelper.robot_queue_key)
         self.update_key(RedisHelper.robot_location_key, {"location": ""})
 
@@ -90,10 +90,10 @@ if __name__ == '__main__':
     # poster.clear()
 
     state = {"color": "red"}
-    poster.push_queue(RedisHelper.iot_web_hook_log, state)
-    state = {"color": "scott"}
-    poster.push_queue(RedisHelper.iot_web_hook_log, state)
-    state = {"color": "green"}
+    # poster.push_queue(RedisHelper.iot_web_hook_log, state)
+    # state = {"color": "scott"}
+    # poster.push_queue(RedisHelper.iot_web_hook_log, state)
+    # state = {"color": "green"}
     poster.push_queue(RedisHelper.robot_queue_key, state)
     state = {"color": "yellow"}
     poster.push_queue(RedisHelper.robot_queue_key, state)

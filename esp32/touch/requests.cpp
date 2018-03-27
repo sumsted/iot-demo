@@ -13,21 +13,32 @@ Requests::Requests(ConfigurationUnion *newConfig){
     establishWifiConnection();
 }
 
-
-int Requests::postAdaIo(const char *user, const char *feed, int value){
+int Requests::postEvent(int value){
     HTTPClient http;
     char payload[1000];
     char url[1000];
-    const char *payloadPattern = "{\"value\":%d}";
-    const char *urlPattern = "https://io.adafruit.com/api/v2/%s/feeds/%s/data";
+    const char *payloadPattern = "{\"device\":\"%s\",\"value\":%d}";
+    const char *urlPattern = "%s://%s/%s/%s"; // protocol://host/path/key
     int code;
 
-    sprintf(payload, payloadPattern, value);
-    sprintf(url, urlPattern, user, feed);
+    sprintf(payload, payloadPattern, config->configuration.deviceId, value);
+    sprintf(url, urlPattern,
+        config->configuration.gatewayProtocol,
+        config->configuration.gatewayHost,
+        config->configuration.gatewayPath,
+        config->configuration.gatewayDeviceKey);
+    Serial.print("URL: ");
+    Serial.println(url);
+    Serial.print("payload: ");
+    Serial.println(payload);
 
-    http.begin(url, rootCa);
+    if(strcmp(config->configuration.gatewayProtocol,"https")==0){
+        http.begin(url, rootCa);
+    } else {
+        http.begin(url);
+    }
+    
     http.addHeader("Content-Type", "application/json");
-    http.addHeader("X-AIO-Key", "c8d50f2a58754014abe65dee32b78655");
     code = http.POST(payload);
 
     if(code > 0){
@@ -35,7 +46,9 @@ int Requests::postAdaIo(const char *user, const char *feed, int value){
         Serial.println(code);
         Serial.println(response);
     }else{
-        Serial.print("problem posting to adaio: ");
+        Serial.print("problem posting to " );
+        Serial.print(config->configuration.gatewayHost);
+        Serial.print(": ");
         Serial.println(code);
         Serial.print("url: ");
         Serial.println(url);
@@ -52,7 +65,7 @@ void Requests::establishWifiConnection(){
     Serial.print("establishwificonnection: ");
     Serial.print(config->configuration.wifiSsid);
     Serial.print(", ");
-    Serial.print(config->configuration.wifiPassword);
+    Serial.println(config->configuration.wifiPassword);
     WiFi.begin(config->configuration.wifiSsid, config->configuration.wifiPassword);
     while(WiFi.status() != WL_CONNECTED){
         Serial.print("attempting to connect, try: ");
@@ -66,6 +79,13 @@ void Requests::establishWifiConnection(){
     }
     Serial.print("connected to wifi with IP address: ");
     localIp = WiFi.localIP();
+    char ipString[250];
+    unsigned char part0 = localIp;
+    unsigned char part1 = localIp >> (8);
+    unsigned char part2 = localIp >> (16);
+    unsigned char part3 = localIp >> (24);
+    sprintf(ipString, "%d.%d.%d.%d", part0, part1, part2, part3);
+    Serial.println(ipString);
     wifiConnected = 1;
 }
 
