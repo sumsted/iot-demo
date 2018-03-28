@@ -25,10 +25,10 @@ enum colors {
 
 byte leds[NUM_COLORS] = {GREEN_LED,RED_LED,BLUE_LED, YELLOW_LED};
 byte buttons[NUM_COLORS] = {GREEN_BUTTON, RED_BUTTON, BLUE_BUTTON, YELLOW_BUTTON};
-long presses[NUM_COLORS] = {0, 0, 0, 0};
-long lastWhiteButtonPress = 0;
-long last = 0;
-long current = 0;
+unsigned long presses[NUM_COLORS] = {0, 0, 0, 0};
+unsigned long lastWhiteButtonPress = 0;
+unsigned long last = 0;
+unsigned long current = 0;
 
 bool greenAction = false;
 bool redAction = false;
@@ -136,7 +136,7 @@ void calculateScores(int score){
 }
 
 void postScores(){
-    r->postAdaIo("scottumsted", "simon.high-score", highScore);
+    r->postEvent(highScore);
     Serial.print(highScore);
     Serial.print(", ");
     Serial.print(lastScore);

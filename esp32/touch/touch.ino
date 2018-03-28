@@ -6,8 +6,10 @@
 #define LED_BLINK_DELAY 50
 
 int emaS;
-long current = 0;
-long last = 0;
+unsigned long last = 0;
+unsigned long current = 0;
+unsigned long lastRed = 0;
+unsigned long currentRed = 0;
 long total = 0;
 long start = 0;
 Requests *r;
@@ -40,6 +42,11 @@ void loop(){
         digitalWrite(YELLOW_LIGHT, 0);
         digitalWrite(GREEN_LIGHT, 0);
         startContact();
+        currentRed = millis()
+        if((currentRed-lastRed) > 20000){
+            r->postEvent(1);
+            lastRed = currentRed;
+        }
     } else if(filtered > 45){
         digitalWrite(RED_LIGHT, 0);
         digitalWrite(YELLOW_LIGHT, 0);
@@ -54,7 +61,8 @@ void loop(){
 
     current = millis();
     if((current - last) > 15000 ){
-fi        last = current;
+        r->postEvent(0);
+        last = current;
     }
     Serial.print(start);
     Serial.print(", ");
