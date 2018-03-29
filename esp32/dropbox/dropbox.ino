@@ -2,9 +2,9 @@
 #include "devices.h"
 
 #define BLUE_BUTTON 0
-#define BLUE_LED 1
+#define BLUE_LED 22
 #define LED_BLINK_DELAY 200
-#define BUTTON_WAIT 250
+#define BUTTON_WAIT 500
 
 long lastButtonPress = 0;
 bool blueAction = false;
@@ -49,11 +49,14 @@ void loop(){
 
 void dropBoxProblem(){
     r->postEvent(1);
+    blink(BLUE_LED);
+    blink(BLUE_LED);
 }
 
 
 void dropBoxNoProblem(){
     r->postEvent(0);
+    blink(BLUE_LED);
 }
 
 void blink(byte pin){

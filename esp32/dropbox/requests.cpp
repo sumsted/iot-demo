@@ -50,6 +50,8 @@ int Requests::postEvent(int value){
         Serial.print(config->configuration.gatewayHost);
         Serial.print(": ");
         Serial.println(code);
+        Serial.print(": ");
+        Serial.println(http.errorToString(code));
         Serial.print("url: ");
         Serial.println(url);
         Serial.print("payload: ");

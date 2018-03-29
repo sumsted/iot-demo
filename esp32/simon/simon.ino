@@ -1,4 +1,5 @@
 #include "requests.h"
+#include "devices.h"
 
 #define RED_BUTTON 39
 #define GREEN_BUTTON 34

@@ -1,4 +1,5 @@
 #include "requests.h"
+#include "devices.h"
 #define RED_LIGHT 27
 #define YELLOW_LIGHT 25
 #define GREEN_LIGHT 33
@@ -42,7 +43,7 @@ void loop(){
         digitalWrite(YELLOW_LIGHT, 0);
         digitalWrite(GREEN_LIGHT, 0);
         startContact();
-        currentRed = millis()
+        currentRed = millis();
         if((currentRed-lastRed) > 20000){
             r->postEvent(1);
             lastRed = currentRed;
