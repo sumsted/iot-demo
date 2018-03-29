@@ -18,13 +18,14 @@ int Requests::postEvent(int value){
     char payload[1000];
     char url[1000];
     const char *payloadPattern = "{\"device\":\"%s\",\"value\":%d}";
-    const char *urlPattern = "%s://%s/%s/%s"; // protocol://host/path/key
+    const char *urlPattern = "%s://%s:%d/%s/%s"; // protocol://host:port/path/key
     int code;
 
     sprintf(payload, payloadPattern, config->configuration.deviceId, value);
     sprintf(url, urlPattern,
         config->configuration.gatewayProtocol,
         config->configuration.gatewayHost,
+        config->configuration.gatewayPort,
         config->configuration.gatewayPath,
         config->configuration.gatewayDeviceKey);
     Serial.print("URL: ");

@@ -89,12 +89,10 @@ ConfigurationUnion *defaultConfig(){
     strcpy(cu->configuration.wifiSsid, GATEWAY_WIFI_SSID);
     strcpy(cu->configuration.wifiPassword, GATEWAY_WIFI_PASSWORD);
     strcpy(cu->configuration.location, "Home");
-//    strcpy(cu->configuration.gatewayProtocol,"https");
-//    strcpy(cu->configuration.gatewayHost,"iotis.fun");
-    strcpy(cu->configuration.gatewayProtocol,"http");
-    strcpy(cu->configuration.gatewayHost,"192.168.2.32:8080");
-    cu->configuration.gatewayPort = 443;
-    strcpy(cu->configuration.gatewayPath,"iot_gateway_queue");
+    strcpy(cu->configuration.gatewayProtocol,GATEWAY_PROTOCOL);
+    strcpy(cu->configuration.gatewayHost,GATEWAY_HOST);
+    cu->configuration.gatewayPort = GATEWAY_PORT;
+    strcpy(cu->configuration.gatewayPath,GATEWAY_PATH);
     strcpy(cu->configuration.gatewayDeviceKey, HALL01_GATEWAY_KEY);
     strcpy(cu->configuration.state[1],"1");
     strcpy(cu->configuration.state[2],"2");
