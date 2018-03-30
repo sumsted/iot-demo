@@ -27,7 +27,7 @@ if __name__ == '__main__':
 #todo robot code
 #todo configure salesforce
 
-#todo change payload in arduino code to include device
+#todo change payload in rovermotor code to include device
 
 #todo test in room
 #todo practice

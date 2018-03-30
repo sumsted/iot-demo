@@ -1,16 +1,25 @@
 #include "requests.h"
 
-#define RED_BUTTON 39
+#define ROBOT_STOP 0
+#define ROBOT_FORWARD 1
+#define ROBOT_ROTATE_LEFT 2
+#define ROBOT_ROTATE_RIGHT 3
+#define ROBOT_BACKWARD 4
+
 #define GREEN_BUTTON 34
+#define RED_BUTTON 39
 #define BLUE_BUTTON 38
 #define YELLOW_BUTTON 37
+
 #define WHITE_BUTTON 36
-#define RED_LED 26
-#define GREEN_LED 14
-#define BLUE_LED 27
-#define YELLOW_LED 25
+
 #define SUCCESS_LED 13
 #define FAIL_LED 12
+
+#define GREEN_LED 14
+#define RED_LED 26
+#define BLUE_LED 27
+#define YELLOW_LED 25
 
 #define NUM_COLORS 4
 #define BUTTON_WAIT 250
@@ -67,7 +76,6 @@ void setup(){
     ConfigurationUnion *pcu = defaultConfig();
     r = new Requests(pcu);
     if(r->wifiConnected){
-        postScores();
         ledFlash();
     } else {
         blink(FAIL_LED);
@@ -75,114 +83,39 @@ void setup(){
         blink(FAIL_LED);
     }
 
-    resetGame();
 }
 
 long lastButtonPush = 0;
 
 void loop(){
-//    current = millis();
-//    if((current - last) > 30000 ){
-//        postScores();
-//        last = current;
-//    }
 
-    if(redAction==true){
-        testButtonPush(red);
-        redAction = false;
-    }
     if(greenAction==true){
-        testButtonPush(green);
+        r->getEvent(ROBOT_FORWARD);
         greenAction = false;
     }
+    if(redAction==true){
+        r->getEvent(ROBOT_BACKWARD);
+        redAction = false;
+    }
     if(blueAction ==true){
-        testButtonPush(blue);
+        r->getEvent(ROBOT_LEFT);
         blueAction = false;
     }
     if(yellowAction==true){
-        testButtonPush(yellow);
+        r->getEvent(ROBOT_RIGHT);
         yellowAction = false;
     }
+
     if(whiteAction==true){
+        r->getEvent(ROBOT_STOP);
         blink(SUCCESS_LED);
         blink(FAIL_LED);
-        gameSize = 0;
-        resetGame();
         whiteAction = false;
     }
 
 }
 
-/*
- * Game code
- */
-void createSequence(byte s){
-    memset(sequence,'\0',MAX_SEQUENCE_SIZE);
-    byte i=0;
-    long nextColor = 0;
-    for(i=0;i < s && s < MAX_SEQUENCE_SIZE; i++){
-        nextColor = random(0, 4);
-        sequence[i] = nextColor;
-//        Serial.println(nextColor);
-    }
-}
 
-void calculateScores(int score){
-    highScore = score > highScore ? score : highScore;
-    lastScore = score;
-    numGames++;
-    totalScore+=score;
-    averageScore = totalScore/numGames;
-}
-
-void postScores(){
-    r->postAdaIo("scottumsted", "simon.high-score", highScore);
-    Serial.print(highScore);
-    Serial.print(", ");
-    Serial.print(lastScore);
-    Serial.print(", ");
-    Serial.println(averageScore);
-}
-
-void resetGame(){
-    calculateScores(playerIndex);
-    current = millis();
-    if((current - last) > 30000){
-        postScores();
-        last = current;
-    }
-    playerIndex = 0;
-    gameSize++;
-    if(gameSize == MAX_SEQUENCE_SIZE){
-        gameSize = 1;
-    }
-    createSequence(gameSize);
-    showSequence();
-}
-
-bool testButtonPush(byte colorChosen){
-    if(colorChosen == sequence[playerIndex]){
-        blink(leds[colorChosen]);
-        playerIndex++;
-        if(playerIndex == gameSize){
-            blink(SUCCESS_LED);
-            resetGame();
-        }
-    } else {
-        blink(FAIL_LED);
-        blink(FAIL_LED);
-        gameSize = 0;
-        resetGame();
-    }
-}
-
-void showSequence(){
-    byte i;
-    blink(SUCCESS_LED);
-    for(i=0;i<gameSize;i++){
-        blink(leds[sequence[i]]);
-    }
-}
 
 
 /*
@@ -284,8 +217,8 @@ void whiteButtonPush(){
 ConfigurationUnion *defaultConfig(){
     ConfigurationUnion *cu = new ConfigurationUnion;
     memset(cu, '\0', sizeof(cu));
-    strcpy(cu->configuration.serial, "SC001");
-    strcpy(cu->configuration.deviceId, "SIMON01");
+    strcpy(cu->configuration.serial, "RB001");
+    strcpy(cu->configuration.deviceId, "ROBOT01");
     strcpy(cu->configuration.model, "ESP32");
     strcpy(cu->configuration.firmware, "1.0");
     strcpy(cu->configuration.wifiSsid, GATEWAY_WIFI_SSID);
