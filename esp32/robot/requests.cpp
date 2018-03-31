@@ -62,6 +62,49 @@ int Requests::postEvent(int value){
 }
 
 
+int Requests::getEvent(int value){
+    HTTPClient http;
+    char payload[1000];
+    char url[1000];
+    const char *urlPattern = "%s://%s:%d/%s/%d"; // protocol://host:port/path/value
+    int code;
+
+    sprintf(url, urlPattern,
+        config->configuration.gatewayProtocol,
+        config->configuration.gatewayHost,
+        config->configuration.gatewayPort,
+        config->configuration.gatewayPath,
+        value);
+    Serial.print("URL: ");
+    Serial.println(url);
+
+
+//    if(strcmp(config->configuration.gatewayProtocol,"https")==0){
+//        http.begin(url, rootCa);
+//    } else {
+        http.begin(url);
+//    }
+
+    code = http.GET();
+
+    if(code > 0){
+        String response = http.getString();
+        Serial.println(code);
+        Serial.println(response);
+    }else{
+        Serial.print("problem posting to " );
+        Serial.print(config->configuration.gatewayHost);
+        Serial.print(": ");
+        Serial.println(code);
+        Serial.print(": ");
+        Serial.println(http.errorToString(code));
+        Serial.print("url: ");
+        Serial.println(url);
+    }
+    http.end();
+}
+
+
 void Requests::establishWifiConnection(){
     wifiConnected = 0;
     byte tries=0;

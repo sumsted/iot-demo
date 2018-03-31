@@ -33,6 +33,7 @@ class Requests {
         Requests(ConfigurationUnion *newConfig);
         byte wifiConnected;
         int postEvent(int value);
+        int getEvent(int value);
         void printConfig(const char *label, ConfigurationUnion *config);
 
     private:

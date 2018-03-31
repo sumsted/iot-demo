@@ -85,7 +85,7 @@ int runMotor(int leftSpeed, int rightSpeed){
     char result[100];
     sprintf(result, "{\"leftSpeed\":%d,\"rightSpeed\":%d,\"leftPulse\":%d,\"rightPulse\":%d}", 
             leftSpeed, rightSpeed, leftPulse, rightPulse);
-    Serial.print(result);
+    Serial.println(result);
     return 0;
 }
 

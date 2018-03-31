@@ -52,7 +52,7 @@ class Motor:
         return self.device.readline()
 
     def move(self, left, right):
-        if 100 < l < -100:
+        if 100 < left < -100 or 100 < right < -100:
             return None
         else:
             packet = Motor.PACKET % ('F', left, right)

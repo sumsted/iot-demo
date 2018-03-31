@@ -1,4 +1,5 @@
 #include "requests.h"
+#include "devices.h"
 
 #define ROBOT_STOP 0
 #define ROBOT_FORWARD 1
@@ -98,11 +99,11 @@ void loop(){
         redAction = false;
     }
     if(blueAction ==true){
-        r->getEvent(ROBOT_LEFT);
+        r->getEvent(ROBOT_ROTATE_LEFT);
         blueAction = false;
     }
     if(yellowAction==true){
-        r->getEvent(ROBOT_RIGHT);
+        r->getEvent(ROBOT_ROTATE_RIGHT);
         yellowAction = false;
     }
 
@@ -114,9 +115,6 @@ void loop(){
     }
 
 }
-
-
-
 
 /*
  * light up the leds
@@ -221,14 +219,14 @@ ConfigurationUnion *defaultConfig(){
     strcpy(cu->configuration.deviceId, "ROBOT01");
     strcpy(cu->configuration.model, "ESP32");
     strcpy(cu->configuration.firmware, "1.0");
-    strcpy(cu->configuration.wifiSsid, GATEWAY_WIFI_SSID);
-    strcpy(cu->configuration.wifiPassword, GATEWAY_WIFI_PASSWORD);
+    strcpy(cu->configuration.wifiSsid, ROBOT_WIFI_SSID);
+    strcpy(cu->configuration.wifiPassword, ROBOT_WIFI_PASSWORD);
     strcpy(cu->configuration.location, "Home");
-    strcpy(cu->configuration.gatewayProtocol,GATEWAY_PROTOCOL);
-    strcpy(cu->configuration.gatewayHost,GATEWAY_HOST);
-    cu->configuration.gatewayPort = GATEWAY_PORT;
-    strcpy(cu->configuration.gatewayPath,GATEWAY_PATH);
-    strcpy(cu->configuration.gatewayDeviceKey, SIMON01_GATEWAY_KEY);
+    strcpy(cu->configuration.gatewayProtocol,ROBOT_PROTOCOL);
+    strcpy(cu->configuration.gatewayHost,ROBOT_HOST);
+    cu->configuration.gatewayPort = ROBOT_PORT;
+    strcpy(cu->configuration.gatewayPath,ROBOT_PATH);
+    strcpy(cu->configuration.gatewayDeviceKey, "");
     strcpy(cu->configuration.state[1],"1");
     strcpy(cu->configuration.state[2],"2");
     strcpy(cu->configuration.state[3],"3");
