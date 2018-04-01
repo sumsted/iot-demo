@@ -13,6 +13,15 @@ Requests::Requests(ConfigurationUnion *newConfig){
     establishWifiConnection();
 }
 
+int Requests::sendUDP(int value){
+    WiFiUDP udp;
+    const char *payloadPattern = "%d";
+    udp.beginPacket(config->configuration.gatewayHost, config->configuration.gatewayPort);
+    udp.printf(payloadPattern, value);
+    udp.endPacket();
+    return 0;
+}
+
 int Requests::postEvent(int value){
     HTTPClient http;
     char payload[1000];

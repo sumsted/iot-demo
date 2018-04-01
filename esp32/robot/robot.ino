@@ -91,24 +91,23 @@ long lastButtonPush = 0;
 void loop(){
 
     if(greenAction==true){
-        r->getEvent(ROBOT_FORWARD);
+        r->sendUDP(ROBOT_FORWARD);
         greenAction = false;
     }
     if(redAction==true){
-        r->getEvent(ROBOT_BACKWARD);
+        r->sendUDP(ROBOT_BACKWARD);
         redAction = false;
     }
     if(blueAction ==true){
-        r->getEvent(ROBOT_ROTATE_LEFT);
+        r->sendUDP(ROBOT_ROTATE_LEFT);
         blueAction = false;
     }
     if(yellowAction==true){
-        r->getEvent(ROBOT_ROTATE_RIGHT);
+        r->sendUDP(ROBOT_ROTATE_RIGHT);
         yellowAction = false;
     }
-
     if(whiteAction==true){
-        r->getEvent(ROBOT_STOP);
+        r->sendUDP(ROBOT_STOP);
         blink(SUCCESS_LED);
         blink(FAIL_LED);
         whiteAction = false;

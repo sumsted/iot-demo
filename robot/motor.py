@@ -16,7 +16,7 @@ class Motor:
 
     def __init__(self):
         self.address = self.get_usb_device('ch341', device_id='motor')
-        self.device = serial.Serial(self.address, 9600, timeout=.5)
+        self.device = serial.Serial(self.address, 9600, timeout=1.0)
         self.read_packet()
         self.read_packet()
         self.read_packet()

@@ -3,6 +3,7 @@
 
 #include <EEPROM.h>
 #include <WiFi.h>
+#include <WiFiUdp.h>
 #include <HTTPClient.h>
 
 typedef struct {
@@ -34,6 +35,7 @@ class Requests {
         byte wifiConnected;
         int postEvent(int value);
         int getEvent(int value);
+        int sendUDP(int value);
         void printConfig(const char *label, ConfigurationUnion *config);
 
     private:

@@ -5,7 +5,7 @@ class Serial:
         pass
 
     def readline(self):
-        pass
+        return str.encode("{\"status\":\"success\"}\n")
 
     def write(self, param):
-        pass
+        return len(param)
