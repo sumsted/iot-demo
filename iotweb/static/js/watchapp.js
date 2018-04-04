@@ -5,13 +5,12 @@ var app = {
     },
     'go' : function(){
         app.getAll();
-        setInterval(app.getAll, app.pauseDuration);
+        // setInterval(app.getAll, app.pauseDuration);
     },
     'getAll' : function() {
         app.getGatewayLog();
-        app.getWebHookLog();
-        app.getRobotLocation();
-        app.getRobotCommands();
+        app.getHubLog();
+        app.getConnectorLog();
     },
     'getQueue': function (url, containerId) {
         var id = "#" + containerId;
@@ -36,24 +35,16 @@ var app = {
         var url = "/iot_gateway_log/peek";
         app.getQueue(url, "gateway-list");
     },
-    'getWebHookLog': function () {
-        var url = "/iot_web_hook_log/peek";
+    'getHubLog': function () {
+        // var url = "/iot_hub_log/peek";
+        var url = "/iot_gateway_log/peek";
+        app.getQueue(url, "hub-list");
+    },
+    'getConnectorLog': function () {
+        // var url = "/iot_connector_log/peek";
+        var url = "/iot_gateway_log/peek";
         app.getQueue(url, "connector-list");
-    },
-    'getRobotCommands': function () {
-        var url = "/robot/peek";
-        app.getQueue(url, "robot-list");
-    },
-    'getRobotLocation': function() {
-        var url = "/robot/location";
-        $.getJSON(
-            url
-        ).done(function (data) {
-            $("#robot-location").html(
-                "<a target=\"_blank\" class=\"robot-location-a\" href=\"" + data.data.location + "\">" + data.data.location + "</a>"
-            );
-        });
     }
-}
+};
 
 app.go();

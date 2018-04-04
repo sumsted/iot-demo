@@ -1,7 +1,10 @@
 #include "requests.h"
 #include "devices.h"
 
-#define TICK_LIGHT 25
+#define DANGER_RPM 500
+#define MODERATE_RPM 300
+#define RED_LIGHT 25
+#define GREEN_LIGHT 33
 #define LED_BLINK_DELAY 50
 #define RPM_WINDOW 5000
 #define POST_WINDOW 30000
@@ -14,13 +17,16 @@ unsigned long lastRpmMillis = 0;
 unsigned long lastPostMillis = 0;
 unsigned long currentMillis = 0;
 int rpm = 0;
+int maxRpm = 0;
 
 Requests *r;
 
 void setup() {
     Serial.begin(9600);
-    pinMode(TICK_LIGHT, OUTPUT);
-    digitalWrite(TICK_LIGHT, 0);
+    pinMode(GREEN_LIGHT, OUTPUT);
+    pinMode(RED_LIGHT, OUTPUT);
+    digitalWrite(GREEN_LIGHT, 0);
+    digitalWrite(RED_LIGHT, 0);
 
     lastRpmMillis = millis();
     lastPostMillis = millis();
@@ -32,13 +38,12 @@ void setup() {
     ConfigurationUnion *pcu = defaultConfig();
     r = new Requests(pcu);
     if(r->wifiConnected){
-        blink(TICK_LIGHT);
-        blink(TICK_LIGHT);
+        blink(GREEN_LIGHT);
+        blink(GREEN_LIGHT);
     } else {
-        blink(TICK_LIGHT);
-        blink(TICK_LIGHT);
-        blink(TICK_LIGHT);
-        blink(TICK_LIGHT);
+        blink(RED_LIGHT);
+        blink(RED_LIGHT);
+        blink(RED_LIGHT);
     }
 }
 
@@ -58,12 +63,24 @@ void loop() {
         Serial.println(rpm);
         lastTicks = ticks;
         lastRpmMillis = currentMillis;
+        maxRpm = rpm > maxRpm ? rpm : maxRpm;
+        if(rpm > DANGER_RPM){
+            digitalWrite(GREEN_LIGHT, 1);
+            digitalWrite(RED_LIGHT, 1);
+        } else if( rpm > MODERATE_RPM) {
+            digitalWrite(GREEN_LIGHT, 1);
+            digitalWrite(RED_LIGHT, 0);
+        } else {
+            digitalWrite(GREEN_LIGHT, 0);
+            digitalWrite(RED_LIGHT, 0);
+        }
     }
 
     currentMillis = millis();
     if(currentMillis - lastPostMillis  > POST_WINDOW){
-        r->postEvent(rpm);
+        r->postEvent(maxRpm);
         Serial.println("post");
+        maxRpm = 0;
         lastPostMillis = currentMillis;
     }
 }
