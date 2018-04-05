@@ -10,7 +10,8 @@ var app = {
     'getAll' : function() {
         app.getGatewayLog();
         app.getHubLog();
-        app.getConnectorLog();
+        app.getSubscriberLog();
+        app.getSalesforceLog();
     },
     'getQueue': function (url, containerId) {
         var id = "#" + containerId;
@@ -36,14 +37,16 @@ var app = {
         app.getQueue(url, "gateway-list");
     },
     'getHubLog': function () {
-        // var url = "/iot_hub_log/peek";
-        var url = "/iot_gateway_log/peek";
+        var url = "/iot_hub_log/peek";
         app.getQueue(url, "hub-list");
     },
-    'getConnectorLog': function () {
-        // var url = "/iot_connector_log/peek";
-        var url = "/iot_gateway_log/peek";
-        app.getQueue(url, "connector-list");
+    'getSubscriberLog': function () {
+        var url = "/iot_subscriber_log/peek";
+        app.getQueue(url, "subscriber-list");
+    },
+    'getSalesforceLog': function () {
+        var url = "/iot_salesforce_log/peek";
+        app.getQueue(url, "salesforce-list");
     }
 };
 

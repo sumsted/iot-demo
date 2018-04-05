@@ -1,18 +1,13 @@
 import json
-
-from azure.servicebus import ServiceBusService, Message, Queue
-from settings import Settings
 from logit import logit
-from sf_helper import SfHelper
 from redis_helper import RedisHelper
+from settings import Settings
+from sf_helper import SfHelper
+from azure.servicebus import ServiceBusService
 
 
 settings = Settings()
 
-
-# todo post messages to log
-# todo route robot messages to robot queue
-# todo call salesforce with other messages
 
 class SubscriberDaemon:
 
@@ -34,9 +29,13 @@ class SubscriberDaemon:
                 logit("LOOKING: 4 message")
                 message = self.bus_service.receive_queue_message(self.queue_name, peek_lock=False)
                 if message.body is not None:
-                    logit("MESSAGE: %s" % str(message.body))
-                    self.log_event(message)
-                    self.route(message)
+                    try:
+                        message_object = json.loads(message.body.decode())
+                    except Exception as e:
+                        message_object = json.loads(message.body)
+                    logit("MESSAGE: %s" % str(message_object))
+                    self.rh.push_log(RedisHelper.iot_subscriber_log_key, message_object)
+                    self.route(message_object)
                 else:
                     logit("MESSAGE: is empty")
 
@@ -45,24 +44,20 @@ class SubscriberDaemon:
         except Exception as e:
             logit("ERROR: exception %s" % str(e))
 
-    def log_event(self, message):
-        rh.push_log(RedisHelper.iot_subscriber_log, message.body)
-
-    def route(self, message):
-        device_id = message.custom_properties['iothub-connection-device-id']
-        event_object = json.loads(message.body)
-        if device_id == 'WEB01':
+    def route(self, message_object):
+        device_id = message_object['device']
+        # {"device":"DBOX01","value":0,"timestamp":"2018-04-05 07:39:26.032771"}
+        if device_id == 'DBOX01':
             sh = SfHelper()
             sh.test_access_token()
-            # url = "/services/data/v41.0/query/?q=SELECT+Dropbox_ID__c+FROM+Asset"
-            # response = sh.get_data(url, True)
-
+            state = 'bad' if message_object['value'] == 1 else 'good'
             url = '/services/data/v41.0/sobjects/Dropbox_Event__e'
             event_object = {
                 "dropbox_id__c": "SN002",
-                "state__c": 'bad'
+                "state__c": state
             }
             response = sh.post_json(url, event_object)
+            self.rh.push_log(RedisHelper.iot_salesforce_log_key, message_object)
 
 
 if __name__ == '__main__':

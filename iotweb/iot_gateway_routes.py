@@ -19,6 +19,30 @@ def get_iot_gateway_log_peek():
     return result
 
 
+@get('/iot_hub_log/peek')
+def get_iot_hub_log_peek():
+    result = {}
+    rh = RedisHelper()
+    result['data'] = rh.peek_queue(RedisHelper.iot_hub_log_key)
+    return result
+
+
+@get('/iot_subscriber_log/peek')
+def get_iot_subscriber_log_peek():
+    result = {}
+    rh = RedisHelper()
+    result['data'] = rh.peek_queue(RedisHelper.iot_subscriber_log_key)
+    return result
+
+
+@get('/iot_salesforce_log/peek')
+def get_iot_salesforce_log_peek():
+    result = {}
+    rh = RedisHelper()
+    result['data'] = rh.peek_queue(RedisHelper.iot_salesforce_log_key)
+    return result
+
+
 @post('/iot_gateway_log/<key>')
 def post_iot_gateway_log(key):
     result = {'success': False, 'message': 'not authorized'}

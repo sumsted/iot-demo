@@ -136,11 +136,10 @@ def iothub_client_init(connection_string, protocol):
 def iothub_client_daemon_run():
     try:
         rh = RedisHelper()
-        queue_name = settings.IOT_GATEWAY['iot_gateway_queue']
         while True:
             message_serial = None
             connection_string = None
-            queue_object = rh.pop_queue(queue_name)
+            queue_object = rh.pop_queue(RedisHelper.iot_gateway_queue_key)
             try:
                 device_id = queue_object['device_id']
                 connection_string = settings.IOT_GW_CONNECTION_STRINGS[device_id]
@@ -168,7 +167,7 @@ def iothub_client_daemon_run():
             logit(
                 "SENT: IoTHubClient.send_event_async accepted message [%d] for transmission to IoT Hub." % message_id
             )
-
+            rh.push_log(RedisHelper.iot_hub_log_key, queue_object)
             time.sleep(QUEUE_SEND_DELAY)
 
     except IoTHubError as iothub_error:
