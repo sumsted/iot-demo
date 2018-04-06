@@ -47,17 +47,20 @@ class SubscriberDaemon:
     def route(self, message_object):
         device_id = message_object['device']
         # {"device":"DBOX01","value":0,"timestamp":"2018-04-05 07:39:26.032771"}
-        if device_id == 'DBOX01':
-            sh = SfHelper()
-            sh.test_access_token()
-            state = 'bad' if message_object['value'] == 1 else 'good'
-            url = '/services/data/v41.0/sobjects/Dropbox_Event__e'
-            event_object = {
-                "dropbox_id__c": "SN002",
-                "state__c": state
-            }
-            response = sh.post_json(url, event_object)
-            self.rh.push_log(RedisHelper.iot_salesforce_log_key, message_object)
+        try:
+            if device_id == 'DBOX01':
+                sh = SfHelper()
+                sh.test_access_token()
+                state = 'bad' if message_object['value'] == 1 else 'good'
+                url = '/services/data/v41.0/sobjects/Dropbox_Event__e'
+                event_object = {
+                    "dropbox_id__c": "SN002",
+                    "state__c": state
+                }
+                response = sh.post_json(url, event_object)
+                self.rh.push_log(RedisHelper.iot_salesforce_log_key, message_object)
+        except Exception as e:
+            logit("ERROR: exception %s" % str(e))
 
 
 if __name__ == '__main__':
