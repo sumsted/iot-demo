@@ -52,7 +52,7 @@ class RedisHelper:
 
     def peek_queue(self, key, count=None, prefix=None):
         if count is None:
-            count = 4
+            count = 10
         result = []
         try:
             full_key = key if prefix is None else prefix + "-" + key

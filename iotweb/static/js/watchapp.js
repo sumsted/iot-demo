@@ -23,7 +23,7 @@ var app = {
                 var colorIndex = 0;
                 $.each(data.data, function (index, item) {
                     var colorCode = "#" + Array(7).join(colorIndex.toString(16));
-                    colorIndex+=2;
+                    colorIndex+=1;
                     var result = "<div class=\"row\"><div class=\"col-md\" style=\"color:"+colorCode+"\">" +
                         JSON.stringify(item) +
                         "</div></div>";

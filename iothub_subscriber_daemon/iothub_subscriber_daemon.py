@@ -54,7 +54,7 @@ class SubscriberDaemon:
                 state = 'bad' if message_object['value'] == 1 else 'good'
                 url = '/services/data/v41.0/sobjects/Dropbox_Event__e'
                 event_object = {
-                    "dropbox_id__c": "SN002",
+                    "dropbox_id__c": device_id,
                     "state__c": state
                 }
                 response = sh.post_json(url, event_object)
