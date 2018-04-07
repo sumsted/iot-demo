@@ -42,6 +42,7 @@ class SubscriberDaemon:
         except KeyboardInterrupt:
             logit("STOP: IoTHubClient daemon stopped")
         except Exception as e:
+            self.rh.push_log(RedisHelper.iot_subscriber_log_key, {'error': str(e)})
             logit("ERROR: exception %s" % str(e))
 
     def route(self, message_object):
@@ -60,6 +61,7 @@ class SubscriberDaemon:
                 response = sh.post_json(url, event_object)
                 self.rh.push_log(RedisHelper.iot_salesforce_log_key, event_object)
         except Exception as e:
+            self.rh.push_log(RedisHelper.iot_salesforce_log_key, {'error': str(e)})
             logit("ERROR: exception %s" % str(e))
 
 
