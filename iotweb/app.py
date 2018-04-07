@@ -14,7 +14,7 @@ import web_routes
 import iot_gateway_routes
 
 rh = RedisHelper()
-rh.clear()
+# rh.clear()
 
 if __name__ == '__main__':
     run(host=settings.WEB['HOST'], port=settings.WEB['PORT'], debug=settings.WEB['DEBUG'])
