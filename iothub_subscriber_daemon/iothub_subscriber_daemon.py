@@ -58,7 +58,7 @@ class SubscriberDaemon:
                     "state__c": state
                 }
                 response = sh.post_json(url, event_object)
-                self.rh.push_log(RedisHelper.iot_salesforce_log_key, message_object)
+                self.rh.push_log(RedisHelper.iot_salesforce_log_key, event_object)
         except Exception as e:
             logit("ERROR: exception %s" % str(e))
 
