@@ -1,19 +1,19 @@
 
 ## Robot
 
-This robot is constructed of off the shelf dev boards, materials from the local hardware store, and a lot of zip ties. 
+This robot is constructed of off the shelf dev boards, materials from the local hardware store, zip ties and hot glue. The controllers used in this bot are coded in Python and C++.
 
 ### Construction
 
-1. The frame is constructed of L shaped aluminum stock and sheet aluminum. 
-2. Electronics are mounted on a corrugated plastic sheet. 
-3. Power comes from a sealed 12V lead acid battery. 
+1. The frame is constructed of L shaped aluminum stock, sheet aluminum, screws and pop rivets. 
+2. Electronics are mounted on a corrugated plastic sheet zip tied to the frame. 
+3. Power comes from a sealed 12V lead acid battery mouted under the the electronics. 
 4. 12V power for the motors is supplied through a fused panel. 
 5. 5V power for electronics is supplied through a 12V to 5V adapter.
 6. The drivetrain consists of two small geared motors mounted to rubberized 4 inch wheels. 
 7. Trailing the robot are two casters. 
 8. The main controller is a Raspberry Pi 2. 
-9. The Rpi connects to an Arduino Nano which in turn drives the motor controller and reads input from the ultrasonic sensor. 
+9. The Raspberry PI connects to an Arduino Nano which in turn drives the motor controller and reads input from the ultrasonic sensor. 
 10. The motor controller drives the two motors. 
 11. The ultrasonic sensor provides distance measure for the front of the robot and hopefully prevents us from crashing the robot.
 
