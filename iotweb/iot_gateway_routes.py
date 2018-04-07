@@ -83,8 +83,6 @@ def get_iot_gateway_queue(key):
 
 @post('/iot_gateway_queue/<device_key>')
 def post_iot_gateway_queue(device_key):
-    # todo accept key to determine device
-    # todo build queue object {'connection string', 'payload'}
     result = {'success': False, 'message': 'not authorized'}
     status_code = 400
     if device_key in settings.IOT_GW_DEVICE_KEYS:
