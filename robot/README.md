@@ -31,8 +31,9 @@ This robot is constructed of off the shelf dev boards, materials from the local 
 8. The Ultrasonic sensor is a cheap HC-SR04 unit, providing a range from 0 to 150cm.  The sensor works by sending an ultrasonic ping on a trigger pin, then it measures the amount of time it takes for the ping to return on the echo pin. 
 9. This Cytron motor controller supports 2 brushed DC motors each drawing 13 Amps. The motors can operate in locked antiphase as described above where the PWM signal controls both speed and direction. Or it can operate in Sign Magnitude mode where PWM controls speed and a separate pin controls direction.
 10. The motor controller runs off the 12 Volts used to supply power to the motors. The controller has a set of buttons that can be used to test the controller and motors.
-11. Sitting on top of the Raspberry Pi is a Sense Hat. The Sense Hat is not used for this project, but does include the LED matrix and sensors such as an acceleromter, gyroscope, magnetometer, temperature, humidity, and barometer.
-12. The LED strip runs on its own controller pulling power from the 5V converter.
+11. The motors used are planetary geared motors each spin at a maximum of 98RPM drawing a maximum of 3.8Amps. The motors are mounted to 4 inch rubberized wheels.  
+12. Sitting on top of the Raspberry Pi is a Sense Hat. The Sense Hat is not used for this project, but does include the LED matrix and sensors such as an acceleromter, gyroscope, magnetometer, temperature, humidity, and barometer.
+13. The LED strip runs on its own controller pulling power from the 5V converter.
 
 #### Raspberry Pi
 
@@ -54,3 +55,6 @@ This robot is constructed of off the shelf dev boards, materials from the local 
 
 ![Sense Hat](/iotweb/static/images/astro.png)
 
+#### Geared Motor
+
+![Geared Motor](/iotweb/static/images/motor.jpg)
