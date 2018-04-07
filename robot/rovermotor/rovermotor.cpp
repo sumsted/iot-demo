@@ -19,8 +19,9 @@
 #define PWM_DELTA 127
 #define PWM_TUNE_PERCENTAGE .75  // use to limit duty signal .5 = 50%
 
-#define MOTOR_SMOOTHING_ITERATIONS 5
-#define MOTOR_SMOOTHING_WAIT 10 // ms
+#define MOTOR_SMOOTHING_ITERATIONS 10
+#define MOTOR_SMOOTHING_WAIT 35 // ms
+
 #define MAX_BUFFER_SIZE 50
 
 #define MINIMUM_SAFE_DISTANCE 15 // cm
@@ -51,8 +52,13 @@ int runMotor(int leftSpeed, int rightSpeed, int sendSerial){
         deltaLeftPulse = (leftPulse - lastLeftPulse) / MOTOR_SMOOTHING_ITERATIONS;
         deltaRightPulse = (rightPulse - lastRightPulse) / MOTOR_SMOOTHING_ITERATIONS;
         for(i=0;i<MOTOR_SMOOTHING_ITERATIONS;i++){
-            analogWrite(DIR_PIN_LF, lastLeftPulse+(deltaLeftPulse*i));
-            analogWrite(DIR_PIN_RF, lastRightPulse+(deltaRightPulse*i));
+            unsigned long l = lastLeftPulse+(deltaLeftPulse*i);
+            unsigned long r = lastRightPulse+(deltaRightPulse*i);
+            analogWrite(DIR_PIN_LF, l);
+            analogWrite(DIR_PIN_RF, r);
+//            Serial.print(l);
+//            Serial.print(", ");
+//            Serial.println(r);
             delay(MOTOR_SMOOTHING_WAIT);
         }
         analogWrite(DIR_PIN_LF, leftPulse);
@@ -97,7 +103,7 @@ void checkMinimumSafeDistance(){
     unsigned long currentMs = millis();
     if((currentMs - lastDistanceCheckMs) > 2000){
         int distance = getDistance(US_FRONT_TRIG_PIN, US_FRONT_ECHO_PIN);
-        Serial.println(distance);
+//        Serial.println(distance);
         if(distance < 15.0){
             runMotor(-50, -50, 0);
             delay(1000);
