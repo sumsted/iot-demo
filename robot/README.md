@@ -51,10 +51,10 @@ This robot is constructed of off the shelf dev boards, materials from the local 
 
 ![Cytron Controller](/iotweb/static/images/controller.png)
 
-#### Sense Hat
-
-![Sense Hat](/iotweb/static/images/astro.png)
-
 #### Geared Motor
 
 ![Geared Motor](/iotweb/static/images/motor.jpg)
+
+#### Sense Hat
+
+![Sense Hat](/iotweb/static/images/astro.png)
