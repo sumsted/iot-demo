@@ -146,6 +146,7 @@ def iothub_client_daemon_run():
                 message_serial = json.dumps(queue_object['message'])
                 logit("FOUND: queue object %s" % str(queue_object))
             except KeyError:
+                rh.push_log(RedisHelper.iot_hub_log_key, {'error': 'bad format:' + str(queue_object)})
                 logit("BAD FORMAT: improperly formatted gateway queue object %s" % str(queue_object), "ERROR")
                 time.sleep(QUEUE_SEND_DELAY)
                 continue
@@ -154,6 +155,7 @@ def iothub_client_daemon_run():
                 time.sleep(QUEUE_WAIT_DELAY)
                 continue
             except Exception as e:
+                rh.push_log(RedisHelper.iot_hub_log_key, {'error': 'parsing problem:' + str(e)})
                 logit("OOPS: exception parsing queue_object %s" % str(e), "ERROR")
 
             logit("SENDING MESSAGE: preparing to send message")
