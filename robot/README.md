@@ -4,6 +4,7 @@
 This robot is constructed of off the shelf dev boards, materials from the local hardware store, and a lot of zip ties. 
 
 ###Construction
+
 1. The frame is constructed of L shaped aluminum stock and sheet aluminum. 
 2. Electronics are mounted on a corrugated plastic sheet. 
 3. Power comes from a sealed 12V lead acid battery. 
@@ -17,7 +18,9 @@ This robot is constructed of off the shelf dev boards, materials from the local 
 11. The ultrasonic sensor provides distance measure for the front of the robot and hopefully prevents us from crashing the robot.
 
 ![Robot](/iotweb/static/images/robot.png)
-### How it works
+
+###How it works
+
 1. The Raspberry Pi acts as a WiFi access point and as the robot controller.
 2. There's a UDP server on the RPi that listens for robot controller packets. Each packet is a number that corresponds to a robot  command.
 3. ServerUDP translates this command into percentage directions for each motor. For example a full rotate right command would translate to 100 left and -100 right.
@@ -32,17 +35,22 @@ This robot is constructed of off the shelf dev boards, materials from the local 
 12. The LED strip runs on its own controller pulling power from the 5V converter.
 
 ####Raspberry Pi
+
 ![Raspberry Pi](/iotweb/static/images/pi.png)
 
 ####Arduino Nano
+
 ![Arduino Nano](/iotweb/static/images/nano.png)
 
 ####PWM Signal
+
 ![PWM](/iotweb/static/images/pwm.gif)
 
 ####Cytron Motor Controller
+
 ![Cytron Controller](/iotweb/static/images/controller.png)
 
 ####Sense Hat
+
 ![Sense Hat](/iotweb/static/images/astro.png)
 
