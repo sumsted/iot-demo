@@ -12,7 +12,7 @@ All devices here are built using the ESP32 from Espressif. This microcontroller 
 
 ### Hall
 
-The Hall board shows how a a hall sensor may be used to measure revolutions per minute. Spin the spinner. The sketch counts the number of revolutions over a 5 second period. The lights light up as the revolutions increase. The maximum number of RPMs in a 30 second period are sent up to the IoT Hub.
+The Hall board shows how a hall sensor may be used to measure revolutions per minute. Spin the spinner. The sketch counts the number of revolutions over a 5 second period. The lights light up as the revolutions increase. The maximum number of RPMs in a 30 second period are sent up to the IoT Hub.
 
 ![Hall](/iotweb/static/images/hall.png)
 
