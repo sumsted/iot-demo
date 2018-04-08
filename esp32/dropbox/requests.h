@@ -10,8 +10,8 @@ typedef struct {
     char deviceId[11];
     char model[11];
     char firmware[11];
-    char wifiSsid[11];
-    char wifiPassword[21];
+    char wifiSsid[51];
+    char wifiPassword[51];
     char location[51];
     char gatewayProtocol[11];
     char gatewayHost[51];
