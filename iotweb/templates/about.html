@@ -36,61 +36,61 @@
 
 <h1 id="iotdemo">IoT Demo</h1>
 
-<p>This demonstration can be found running at https://iotis.fun. </p>
+<p class="copytext">This demonstration can be found running at https://iotis.fun. </p>
 
 <p><img style="width:75%" src="/static/images/overview.png" alt="Overview" /></p>
 
 <h2 id="iotdevices">IoT Devices</h2>
 
-<p>All devices here are built using the ESP32 from Espressif. This microcontroller has wireless capabilities, WiFi, Bluetooth and BLE. The ESP32 can act as a WiFi access point or client. The ESP32 has a large number of GPIO pins, a hall sensor, temperature, button, led, capacitive touch pins and more. The code for the demo boards may be found in /esp32.</p>
+<p class="copytext">All devices here are built using the ESP32 from Espressif. This microcontroller has wireless capabilities, WiFi, Bluetooth and BLE. The ESP32 can act as a WiFi access point or client. The ESP32 has a large number of GPIO pins, a hall sensor, temperature, button, led, capacitive touch pins and more. The code for the demo boards may be found in /esp32.</p>
 
 <p><img style="width:75%" src="/static/images/esp32b.png" alt="ESP32" /></p>
 
 <h3 id="hall">Hall</h3>
 
-<p>The Hall board shows how a hall sensor may be used to measure revolutions per minute. Spin the spinner. The sketch counts the number of revolutions over a 5 second period. The lights light up as the revolutions increase. The maximum number of RPMs in a 30 second period are sent up to the IoT Hub.</p>
+<p class="copytext">The Hall board shows how a hall sensor may be used to measure revolutions per minute. Spin the spinner. The sketch counts the number of revolutions over a 5 second period. The lights light up as the revolutions increase. The maximum number of RPMs in a 30 second period are sent up to the IoT Hub.</p>
 
 <p><img style="width:75%" src="/static/images/hall.png" alt="Hall" /></p>
 
 <h3 id="touch">Touch</h3>
 
-<p>The Touch board uses the built in capacitive touch capabilities of the ESP32 to measure changes in capacitance across a circuit. Use enough of these sensors and you can build your own touch pad or display. If you are able to light the red light, the board will send an event to the IoT Hub.</p>
+<p class="copytext">The Touch board uses the built in capacitive touch capabilities of the ESP32 to measure changes in capacitance across a circuit. Use enough of these sensors and you can build your own touch pad or display. If you are able to light the red light, the board will send an event to the IoT Hub.</p>
 
 <p><img style="width:75%" src="/static/images/touch.png" alt="Touch" /></p>
 
 <h3 id="dropbox">Dropbox</h3>
 
-<p>The drop board uses the onboard button on the ESP32. When the right button is pressed a "bad" event is sent to the IoT hub indicating that the dropbox needs service. The subscriber should send this event on to Salesforce so that a technician may be dispatched. Every 30 seconds the dropbox board will send a "good" even indicating that the the dropbox is healthy.</p>
+<p class="copytext">The drop board uses the onboard button on the ESP32. When the right button is pressed a "bad" event is sent to the IoT hub indicating that the dropbox needs service. The subscriber should send this event on to Salesforce so that a technician may be dispatched. Every 30 seconds the dropbox board will send a "good" even indicating that the the dropbox is healthy.</p>
 
 <p><img style="width:75%" src="/static/images/dropbox.png" alt="Dropbox" /></p>
 
 <h3 id="robotcontroller">Robot Controller</h3>
 
-<p>The robot board sends commands to the robot. The board communicates directly to the robot WiFi access point and sends UDP packets to the robot controller indicating the action the robot should take.</p>
+<p class="copytext">The robot board sends commands to the robot. The board communicates directly to the robot WiFi access point and sends UDP packets to the robot controller indicating the action the robot should take.</p>
 
 <p><img style="width:75%" src="/static/images/robotcontroller.png" alt="Robot Controller" /></p>
 
 <h3 id="web">Web</h3>
 
-<p>The web device simulates an IoT device. It pushes events to IoT Hub. These events are picked up by the subscriber. The web device may be found at https://iotis.fun/device.</p>
+<p class="copytext">The web device simulates an IoT device. It pushes events to IoT Hub. These events are picked up by the subscriber. The web device may be found at https://iotis.fun/device.</p>
 
 <p><img style="width:30%" src="/static/images/web.png" alt="Web" /></p>
 
 <h2 id="constraineddevicegateway">Constrained Device Gateway</h2>
 
-<p>A constrained device gateway is needed for those devices unable to directly connect to the IoT Hub, either because of network routing, security, or the devices is too simple to create the required request. The gateway is made up of three components. There's a web route that captures events from each device. This route captures device id, key, and a state. Once captured the web route places the event on a queue. In this example we use Redis to act as a queue for our events. The queue is needed to help the gateway throttle activity into the hub and to ensure that no events are lost should network access to the IoT Hub be lost. The IoT Hub client pops events off the queue and posts them to the IoT Hub. Thing I'd change: Run the gateway closer to the devices not remotely.</p>
+<p class="copytext">A constrained device gateway is needed for those devices unable to directly connect to the IoT Hub, either because of network routing, security, or the devices is too simple to create the required request. The gateway is made up of three components. There's a web route that captures events from each device. This route captures device id, key, and a state. Once captured the web route places the event on a queue. In this example we use Redis to act as a queue for our events. The queue is needed to help the gateway throttle activity into the hub and to ensure that no events are lost should network access to the IoT Hub be lost. The IoT Hub client pops events off the queue and posts them to the IoT Hub. Thing I'd change: Run the gateway closer to the devices not remotely.</p>
 
 <p><img style="width:75%" src="/static/images/gateway.png" alt="Constrained Device Gateway" /></p>
 
 <h2 id="iothub">IoT Hub</h2>
 
-<p>The IoT Hub provides a complete device management solution. Devices may be created programatically or through the console. Once defined the devices are assigned keys and endpoints that allow the device to send events over a number of different protocols including HTTP and MQTT. MQTT is lighter weight protocol than HTTP and is focused on data transmission. An MQTT connection is bi-directional allowing a connection to publish and subscribe. This makes it useful for pushing updates down to devices. In HTTP devices must pole and pull for updates. Along with IoT Hub, Azure provides many ways to consume the device events. Service Bus Queues may be established to filter the relevant events needed by subscribers.  IoT Hub may capture events from a variety of sources supporting a variety of use cases allowing centralized management of all device assets. Separate queues may be established for each use case allowing filter of events specific for that use case.</p>
+<p class="copytext">The IoT Hub provides a complete device management solution. Devices may be created programatically or through the console. Once defined the devices are assigned keys and endpoints that allow the device to send events over a number of different protocols including HTTP and MQTT. MQTT is lighter weight protocol than HTTP and is focused on data transmission. An MQTT connection is bi-directional allowing a connection to publish and subscribe. This makes it useful for pushing updates down to devices. In HTTP devices must pole and pull for updates. Along with IoT Hub, Azure provides many ways to consume the device events. Service Bus Queues may be established to filter the relevant events needed by subscribers.  IoT Hub may capture events from a variety of sources supporting a variety of use cases allowing centralized management of all device assets. Separate queues may be established for each use case allowing filter of events specific for that use case.</p>
 
 <p><img style="width:75%" src="/static/images/iothub.png" alt="IoT Hub" /></p>
 
 <h2 id="eventsubscription">Event Subscription</h2>
 
-<p>The subscription process uses a library provided by Azure to pull events from a service bus queue.  This python library is a wrapper to IoT Hub Client C Library and must be compiled for the platform that it will run on. The subscriber runs continually waiting for events to be posted on the Azure Service Bus Queue being watched. As events are picked up they are passed along to the appropriate subscribers. Thing i'd change:  Take advantage of the service bus queue to filter and route specific events to specific queues. I'd setup each consumer with it's own subscriber.</p>
+<p class="copytext">The subscription process uses a library provided by Azure to pull events from a service bus queue.  This python library is a wrapper to IoT Hub Client C Library and must be compiled for the platform that it will run on. The subscriber runs continually waiting for events to be posted on the Azure Service Bus Queue being watched. As events are picked up they are passed along to the appropriate subscribers. Thing i'd change:  Take advantage of the service bus queue to filter and route specific events to specific queues. I'd setup each consumer with it's own subscriber.</p>
 
 <p><img style="width:75%" src="/static/images/subscription.png" alt="Event Subscription" /></p>
 
