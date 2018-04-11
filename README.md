@@ -58,3 +58,11 @@ The subscription process uses a library provided by Azure to pull events from a 
 
 ![Event Subscription](/iotweb/static/images/subscription.png)
 
+## Salesforce Platform Events
+
+Platform Events are a new concept on the Salesforce platform. They allow processes to publish events, state, telemetry on to a bus that other Salesforce processes can consume and take action on. Platform Events transcend the Salesforce environment. Events may be consumed from processes outside of Salesforce and external processes may publish events on to the Salesforce event bus. Events can be a replacement for other Salesforce concepts like process builder and flows. A Platform Event resembles a Salesforce object.
+
+IoT Orchestration is a graphical no code tool available in Salesforce that allows you to subscribe to events published by assets, define state diagrams for the expected events, visualize activity, and to take action on the events, such as creating a case or opportunity.
+
+![Salesforce](/iotweb/static/images/salesforce.png)
+
