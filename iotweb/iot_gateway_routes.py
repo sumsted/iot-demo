@@ -95,7 +95,7 @@ def post_iot_gateway_queue(device_key):
         rh = RedisHelper()
         rh.push_queue(RedisHelper.iot_gateway_queue_key, queue_object)
         rh.push_log(RedisHelper.iot_gateway_log_key, message)
-        result = {"success": True, "message": "iot gateway queue posted", "message": message}
+        result = {"success": True, "status": "iot gateway queue posted", "message": message}
         status_code = 200
     else:
         logit("unauthorized")
